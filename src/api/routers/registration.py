@@ -4,6 +4,7 @@ from fastapi import APIRouter, Depends, HTTPException, Response
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from sqlalchemy.exc import NoResultFound
 from starlette import status
+from starlette.requests import Request
 
 from src.api.middleware.auth import AuthProvider
 from src.api.middleware.authjwt import AuthJwt
@@ -11,11 +12,11 @@ from src.api.middleware.custom_exceptions.user_already_exist import UserAlreadyE
 from src.api.middleware.exceptions import exception_mapping
 from src.api.myapi.registration_model import UserAuthResponseModel, SignUpRequestModel, SignInRequestModel, SignUpUser, \
     TokenModel, AuthUser
-from src.database.db import get_db
+from src.database.db import get_db, commit_on_signup
 from src.service.registration.signup_user import register_user, signin_user
 
 router = APIRouter(
-    prefix="/api/registration", tags=["Create a User "]
+    prefix="/api/registration", tags=["Create a User"]
 )
 
 auth_handler = AuthProvider()
@@ -23,13 +24,14 @@ http_bearer = HTTPBearer()
 
 
 @router.post("/auth/signup", response_model=SignUpUser)
-def signup(user: SignUpRequestModel, response: Response, db=Depends(get_db)):
-    """ API call to register a new user/account """
+@commit_on_signup
+def signup(request: Request, user: SignUpRequestModel, response: Response, db=Depends(get_db)):
+    """ API call to register a new user/account
+        :param request: Request is used for the decorator commit_on_signup
+    """
     try:
         output_user: SignUpUser = register_user(user_model=user, db=db)
-
         response.status_code = status.HTTP_201_CREATED
-        raise NoResultFound
         return output_user
     except (UserAlreadyExistException, NoResultFound) as e:
         http_status, detail_function = exception_mapping.get(type(e), (

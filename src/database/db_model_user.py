@@ -45,6 +45,8 @@ class User(Base):
 
         db.add(new_user)
         db.flush()
+        # flush is used, because the data is added only temporarily to the session / database
+        # if an error occurs, the data is not written to the database
 
     @staticmethod
     def get_user_by_email(db: Session, email: str) -> Type['User']:

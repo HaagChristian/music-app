@@ -19,6 +19,18 @@ router = APIRouter(
 http_bearer = HTTPBearer()
 
 
+def test_auth(token: Annotated[HTTPAuthorizationCredentials, Depends(http_bearer)]):
+    try:
+        auth = AuthJwt()
+        auth.decode_token(jwt_token=token)
+        email_from_jwt = auth.get_token_data_from_decoded_token
+
+        return email_from_jwt
+    except Unauthorized as e:
+        # exception forwarding is not supported by dependencies, that's why a HTTPException is raised directly
+        raise HTTPException(status_code=404, detail="User not found")
+
+
 @router.get("/me", response_model=UserResponseModel)
 def read_users_me(token: Annotated[HTTPAuthorizationCredentials, Depends(http_bearer)], db=Depends(get_db)):
     try:
@@ -31,3 +43,13 @@ def read_users_me(token: Annotated[HTTPAuthorizationCredentials, Depends(http_be
         http_status, detail_function = exception_mapping.get(type(e), (
             status.HTTP_500_INTERNAL_SERVER_ERROR, lambda e: str(e.args[0])))
         raise HTTPException(status_code=http_status, detail=detail_function(e))
+
+
+@router.get("/test", response_model=UserResponseModel)
+def test(email=Depends(test_auth), db=Depends(get_db)):
+    try:
+        print(email)
+    except Unauthorized:
+        print('here')
+        raise HTTPException(status_code=404, detail="User not found")
+    return get_current_user(jwt_payload=email, db=db)

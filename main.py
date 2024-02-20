@@ -6,7 +6,7 @@ from fastapi import FastAPI
 from starlette.middleware.cors import CORSMiddleware
 from starlette.requests import Request
 
-from src.api.routers import registration, user
+from src.api.routers import registration, user, id3_service
 
 version: str = "0.0.1"
 app_name: str = "MusicApp Service"
@@ -27,6 +27,7 @@ app = FastAPI(
 
 app.include_router(registration.router)
 app.include_router(user.router)
+app.include_router(id3_service.router)
 
 # CORS is required to run api simultaneously with website on local machine
 # Allow localhost:8000 and 127.0.0.1:8000 to access the api

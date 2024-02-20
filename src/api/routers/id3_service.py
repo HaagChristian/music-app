@@ -1,4 +1,4 @@
-from fastapi import APIRouter, UploadFile, HTTPException
+from fastapi import APIRouter, UploadFile, HTTPException, File
 from starlette import status
 
 from src.api.middleware.custom_exceptions.WrongFileType import WrongFileType
@@ -11,10 +11,13 @@ router = APIRouter(
 
 
 @router.post("/uploadfile")
-def upload_file(file: UploadFile):
+def upload_file(file: UploadFile = File(..., media_type="audio/mpeg", description="The mp3 file to upload")):
     try:
         # input validation
         check_input_file(file)
+        # TODO API call to ID3 service
+        # TODO safe response to db
+        # TODO return metadata
         return {"message": "File uploaded successfully"}
     except WrongFileType as e:
         http_status, detail_function = exception_mapping.get(type(e), (

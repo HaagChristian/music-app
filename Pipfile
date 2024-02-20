@@ -17,8 +17,7 @@ pymysql = "1.1.0"
 passlib = "*"
 python-magic-bin = "*"
 python-multipart = "*"
-
-
+requests = "*"
 
 [dev-packages]
 pytest = "*"

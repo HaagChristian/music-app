@@ -1,6 +1,7 @@
-from sqlalchemy import Column, Integer, String, Date, Enum, ForeignKey, LargeBinary
+from sqlalchemy import Integer, String, Date, ForeignKey
 from sqlalchemy.orm import relationship, Mapped, mapped_column
-from musicApp.src.database.musicDB.db import Base
+
+from src.database.musicDB.db import Base
 
 
 class Song(Base):

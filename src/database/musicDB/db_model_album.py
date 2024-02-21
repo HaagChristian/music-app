@@ -1,6 +1,7 @@
 from sqlalchemy import String, ForeignKey
 from sqlalchemy.orm import relationship, Mapped, mapped_column
-from musicApp.src.database.musicDB.db import Base
+
+from src.database.musicDB.db import Base
 
 
 class Album(Base):

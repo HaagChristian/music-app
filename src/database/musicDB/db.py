@@ -3,11 +3,10 @@ from sqlalchemy.orm import sessionmaker, declarative_base
 
 from src.settings.settings import SQLALCHEMY_DATABASE_URI_MUSIC
 
-engine_music = create_engine(SQLALCHEMY_DATABASE_URI_MUSIC, pool_size=1, max_overflow=4, echo=False)
+engine_music = create_engine(SQLALCHEMY_DATABASE_URI_MUSIC, pool_size=1, max_overflow=4, echo=True)
 
 SessionLocal_Music = sessionmaker(autocommit=False, autoflush=False, bind=engine_music)
 
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine_music)
 
 Base = declarative_base()
 

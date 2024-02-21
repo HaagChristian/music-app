@@ -7,8 +7,10 @@ from src.database.musicDB.db import Base
 class SongArtist(Base):
     __tablename__ = 'songs_artists'
 
-    SONG_ID: Mapped[int] = mapped_column(Integer, ForeignKey('songs.SONG_ID'), primary_key=True, nullable=False, index=True)
-    ARTIST_ID: Mapped[int] = mapped_column(Integer, ForeignKey('artists.ARTIST_ID'), primary_key=True, nullable=False, index=True)
+    SONG_ID: Mapped[int] = mapped_column(Integer, ForeignKey('songs.SONG_ID'), primary_key=True, nullable=False,
+                                         index=True)
+    ARTIST_ID: Mapped[int] = mapped_column(Integer, ForeignKey('artists.ARTIST_ID'), primary_key=True, nullable=False,
+                                           index=True)
 
-    SONG: Mapped['Song'] = relationship("Song", back_populates="SONG_ARTISTS")
-    ARTIST: Mapped['Artist'] = relationship("Artist", back_populates="SONG_ARTISTS")
+    song: Mapped['Song'] = relationship(back_populates="songs_artist")
+    artist: Mapped['Artist'] = relationship(back_populates="songs_artist")

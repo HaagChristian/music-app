@@ -12,7 +12,7 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine_music
 Base = declarative_base()
 
 
-def get_db_user():
+def get_db_music():
     db = SessionLocal_Music()
     try:
         yield db

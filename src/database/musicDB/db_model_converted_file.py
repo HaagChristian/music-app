@@ -12,4 +12,4 @@ class ConvertedFile(Base):
     FILE_DATA: Mapped[LargeBinary] = mapped_column(LargeBinary)
     FILE_TYPE: Mapped[str] = mapped_column(Enum('wav', 'rar'))
 
-    ORIGINAL_FILE: Mapped['File'] = relationship("File", back_populates="CONVERTED_FILES")
+    original_file: Mapped['File'] = relationship(back_populates="converted_file")

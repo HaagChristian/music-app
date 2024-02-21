@@ -12,7 +12,7 @@ from src.api.middleware.custom_exceptions.user_already_exist import UserAlreadyE
 from src.api.middleware.exceptions import exception_mapping
 from src.api.myapi.registration_model import UserAuthResponseModel, SignUpRequestModel, SignInRequestModel, SignUpUser, \
     TokenModel, AuthUser
-from src.database.userDB.db import get_db, commit_on_signup
+from src.database.userDB.db import get_db_user, commit_on_signup
 from src.service.registration.signup_user import register_user, signin_user
 
 router = APIRouter(
@@ -25,7 +25,7 @@ http_bearer = HTTPBearer()
 
 @router.post("/auth/signup", response_model=SignUpUser)
 @commit_on_signup
-def signup(request: Request, user: SignUpRequestModel, response: Response, db=Depends(get_db)):
+def signup(request: Request, user: SignUpRequestModel, response: Response, db=Depends(get_db_user)):
     """ API call to register a new user/account
         :param request: Request is used for the decorator commit_on_signup
     """
@@ -40,7 +40,7 @@ def signup(request: Request, user: SignUpRequestModel, response: Response, db=De
 
 
 @router.post("/auth/signin", response_model=UserAuthResponseModel)
-def signin_api(user_details: SignInRequestModel, db=Depends(get_db)):
+def signin_api(user_details: SignInRequestModel, db=Depends(get_db_user)):
     """ API call to sign in a user/account and return a token and refresh token """
     try:
         user: AuthUser = signin_user(user_details.email, user_details.password, db=db)

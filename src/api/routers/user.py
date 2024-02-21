@@ -6,7 +6,7 @@ from starlette import status
 from src.api.middleware.custom_exceptions.unauthorized import Unauthorized
 from src.api.middleware.exceptions import exception_mapping
 from src.api.myapi.user_model import UserResponseModel
-from src.database.userDB.db import get_db
+from src.database.userDB.db import get_db_user
 from src.service.login.user_data import get_current_user
 
 http_bearer = HTTPBearer()
@@ -16,7 +16,7 @@ router = APIRouter(
 
 
 @router.get("/me", response_model=UserResponseModel)
-def read_users_me(request: Request, db=Depends(get_db)):
+def read_users_me(request: Request, db=Depends(get_db_user)):
     try:
         return get_current_user(jwt_payload=request.state.user_email, db=db)
     except (Unauthorized, NoResultFound) as e:

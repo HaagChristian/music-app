@@ -19,19 +19,26 @@ def load_env_with_default(env_name: str, default_value):
 
 # Database
 
-DATABASE_USERNAME = load_env_with_default('DATABASE_USERNAME', 'root')
-DATABASE_PASSWORD = load_env_with_default('DATABASE_PASSWORD', 'not set')
-DATABASE = load_env_with_default('DATABASE', 'fastapi_app')
+DATABASE_USERNAME_USER = load_env_with_default('DATABASE_USERNAME_USER', 'root')
+DATABASE_PASSWORD_USER = load_env_with_default('DATABASE_PASSWORD_USER', 'not set')
+DATABASE_USER = load_env_with_default('DATABASE_USER', 'fastapi_app')
 DATABASE_HOST = load_env_with_default('DATABASE_HOST', 'mysql')
-DATABASE_PORT = load_env_with_default('DATABASE_PORT', 3306)
+DATABASE_PORT_USER = load_env_with_default('DATABASE_PORT_USER', 3306)
+
+DATABASE_USERNAME_MUSIC = load_env_with_default('DATABASE_USERNAME_MUSIC', 'root')
+DATABASE_PASSWORD_MUSIC = load_env_with_default('DATABASE_PASSWORD_MUSIC', 'not set')
+DATABASE_MUSIC = load_env_with_default('DATABASE_MUSIC', 'fastapi_app_music')
+DATABASE_PORT_MUSIC = load_env_with_default('DATABASE_PORT_MUSIC', 3308)
 
 RUN_IN_DOCKER_COMPOSE = load_env_with_default('RUN_IN_DOCKER_COMPOSE',
                                               False)  # env. is always as string --> no boolean without parsing
 
 if RUN_IN_DOCKER_COMPOSE:
-    SQLALCHEMY_DATABASE_URI = f"{DATABASE_HOST}+pymysql://{DATABASE_USERNAME}:{DATABASE_PASSWORD}@host.docker.internal:{DATABASE_PORT}/{DATABASE}"
+    SQLALCHEMY_DATABASE_URI_USER = f"{DATABASE_HOST}+pymysql://{DATABASE_USERNAME_USER}:{DATABASE_PASSWORD_USER}@host.docker.internal:{DATABASE_PORT_USER}/{DATABASE_USER}"
+    SQLALCHEMY_DATABASE_URI_MUSIC = f"{DATABASE_HOST}+pymysql://{DATABASE_USERNAME_MUSIC}:{DATABASE_PASSWORD_MUSIC}@host.docker.internal:{DATABASE_PORT_MUSIC}/{DATABASE_MUSIC}"
 else:
-    SQLALCHEMY_DATABASE_URI = f"{DATABASE_HOST}+pymysql://{DATABASE_USERNAME}:{DATABASE_PASSWORD}@localhost:{DATABASE_PORT}/{DATABASE}"
+    SQLALCHEMY_DATABASE_URI_USER = f"{DATABASE_HOST}+pymysql://{DATABASE_USERNAME_USER}:{DATABASE_PASSWORD_USER}@localhost:{DATABASE_PORT_USER}/{DATABASE_USER}"
+    SQLALCHEMY_DATABASE_URI_MUSIC = f"{DATABASE_HOST}+pymysql://{DATABASE_USERNAME_MUSIC}:{DATABASE_PASSWORD_MUSIC}@localhost:{DATABASE_PORT_MUSIC}/{DATABASE_MUSIC}"
 
 # JWT Token encryption/decryption
 

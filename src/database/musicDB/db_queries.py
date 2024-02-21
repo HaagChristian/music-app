@@ -25,7 +25,8 @@ def add_file_and_metadata(db: Session, file, metadata: MetadataResponse):
             TITLE=metadata.title,
             RELEASE_DATE=metadata.date,
             file=file,
-            album=album
+            album=album,
+            GENRE_ID=genre_res.GENRE_ID
         )
 
     for artist_name in metadata.artists:

@@ -10,6 +10,7 @@ from src.api.myapi.metadata_model import MetadataResponse
 from src.database.musicDB.db import get_db_music, commit_with_rollback_backup
 from src.database.musicDB.db_queries import add_file_and_metadata
 from src.settings.error_messages import NO_METADATA_FOUND, METADATA_VALIDATION_ERROR
+from src.settings.settings import REQUEST_TO_ID3_SERVICE
 
 http_bearer = HTTPBearer()
 
@@ -28,7 +29,7 @@ def upload_file(response: Response, request: Request,
         # input validation
         # check_input_file(file) # TODO: wider auskommentieren sobald eine gute Testdatei da ist
 
-        res = requests.post("http://127.0.0.1:8001/api/metadata/get-data", files={'file': file.file})
+        res = requests.post(f"http://{REQUEST_TO_ID3_SERVICE}:8001/api/metadata/get-data", files={'file': file.file})
         if res.status_code not in [200, 206]:
             if res.status_code == 422:
                 raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail=NO_METADATA_FOUND)

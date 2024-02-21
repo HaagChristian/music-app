@@ -5,7 +5,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base, Session
 from starlette.requests import Request
 
-from musicApp.src.settings.settings import SQLALCHEMY_DATABASE_URI
+from src.settings.settings import SQLALCHEMY_DATABASE_URI
 
 engine = create_engine(SQLALCHEMY_DATABASE_URI, pool_size=1, max_overflow=4, echo=False)
 # echo=True for debugging (print SQL queries to console)

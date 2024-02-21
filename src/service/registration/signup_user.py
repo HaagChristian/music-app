@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from src.api.middleware.auth import AuthProvider
 from src.api.middleware.custom_exceptions.user_already_exist import UserAlreadyExistException
 from src.api.myapi.registration_model import SignUpRequestModel, SignUpUser
-from src.database.db_model_user import User
+from src.database.userDB.db_model_user import User
 from src.settings.error_messages import DB_INTEGRITY_ERROR
 
 auth_handler = AuthProvider()

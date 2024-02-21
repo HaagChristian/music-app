@@ -1,7 +1,7 @@
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import relationship, Mapped, mapped_column
 
-from musicApp.src.database.userDB.db import Base
+from src.database.userDB.db import Base
 
 
 class Address(Base):

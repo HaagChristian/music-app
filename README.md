@@ -1,5 +1,9 @@
 # fastapi authentication microservice
 
+## Installation
+
+pip install -r requirements.txt
+
 ## Description
 
 This API provides endpoints for account registration and user handling.

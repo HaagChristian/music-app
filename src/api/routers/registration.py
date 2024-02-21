@@ -12,7 +12,7 @@ from src.api.middleware.custom_exceptions.user_already_exist import UserAlreadyE
 from src.api.middleware.exceptions import exception_mapping
 from src.api.myapi.registration_model import UserAuthResponseModel, SignUpRequestModel, SignInRequestModel, SignUpUser, \
     TokenModel, AuthUser
-from src.database.db import get_db, commit_on_signup
+from src.database.userDB.db import get_db, commit_on_signup
 from src.service.registration.signup_user import register_user, signin_user
 
 router = APIRouter(

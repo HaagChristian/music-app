@@ -3,8 +3,8 @@ from typing import List, Type
 from sqlalchemy.orm import Session, relationship, Mapped, mapped_column
 
 from src.api.myapi.registration_model import SignUpRequestModel
-from src.database.db import Base
-from src.database.db_model_address import Address
+from src.database.userDB.db import Base
+from src.database.userDB.db_model_address import Address
 
 
 class User(Base):

@@ -6,12 +6,21 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from src.database.musicDB.db import Base
 
 
+class Artist(Base):
+    __tablename__ = 'artists'
+
+    ARTIST_ID: Mapped[int] = mapped_column(Integer, primary_key=True)
+    ARTIST_NAME: Mapped[str] = mapped_column(String(100))
+
+    song: Mapped['SongArtist'] = relationship(back_populates="artist")
+
+
 class Album(Base):
     __tablename__ = 'albums'
 
     ALBUM_ID: Mapped[int] = mapped_column(primary_key=True, nullable=False, index=True)
     ALBUM_NAME: Mapped[str] = mapped_column(String(100))
-    ARTIST_ID: Mapped[int] = mapped_column(ForeignKey('artists.ARTIST_ID'), nullable=False)
+    ARTIST_ID: Mapped[int] = mapped_column(Integer, ForeignKey('artists.ARTIST_ID'), nullable=False)
 
     song: Mapped['Song'] = relationship(back_populates="album")
 
@@ -26,15 +35,6 @@ class SongArtist(Base):
 
     song: Mapped['Song'] = relationship(back_populates="artist")
     artist: Mapped['Artist'] = relationship(back_populates="song")
-
-
-class Artist(Base):
-    __tablename__ = 'artists'
-
-    ARTIST_ID: Mapped[int] = mapped_column(Integer, primary_key=True)
-    ARTIST_NAME: Mapped[str] = mapped_column(String(100))
-
-    song: Mapped['SongArtist'] = relationship(back_populates="artist")
 
 
 class ConvertedFile(Base):

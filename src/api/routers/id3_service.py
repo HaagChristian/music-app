@@ -1,5 +1,6 @@
 import requests
-from fastapi import APIRouter, UploadFile, HTTPException, File
+from fastapi import APIRouter, UploadFile, HTTPException, File, Depends
+from fastapi.security import HTTPBearer
 from starlette import status
 from starlette.responses import Response
 
@@ -9,8 +10,11 @@ from src.api.myapi.metadata_model import MetadataResponse
 from src.service.id3.validation import check_input_file
 from src.settings.error_messages import NO_METADATA_FOUND, METADATA_VALIDATION_ERROR
 
+http_bearer = HTTPBearer()
+
 router = APIRouter(
-    prefix="/api/id3service", tags=["ID3 Service"]
+    prefix="/api/id3service", tags=["ID3 Service"],
+    dependencies=[Depends(http_bearer)]
 )
 
 

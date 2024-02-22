@@ -25,3 +25,4 @@ class MetadataFromSearch(BaseModel):
     genre: Optional[str] = None
     date: Optional[str] = None
     duration: Optional[float] = None
+    file_id: int

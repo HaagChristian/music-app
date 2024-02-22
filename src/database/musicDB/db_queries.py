@@ -43,7 +43,7 @@ def add_file_and_metadata(db: Session, file, metadata: MetadataResponse):
 
 def search_for_title_and_artist(db: Session, title: str, artist: str):
     if title and artist:
-        return db.query(Song).filter(
+        return db.query(Song).join(Song.artist).join(Song.album).filter(
             and_(
                 Song.TITLE.like(title),
                 Artist.ARTIST_NAME == artist
@@ -54,13 +54,13 @@ def search_for_title_and_artist(db: Session, title: str, artist: str):
             joinedload(Song.genre)) \
             .all()
     elif title and not artist:
-        return db.query(Song).filter(Song.TITLE.like(title)).options(
+        return db.query(Song).join(Song.artist).join(Song.album).filter(Song.TITLE.like(title)).options(
             joinedload(Song.artist),
             joinedload(Song.album),
             joinedload(Song.genre)).all()
     else:
         # only artist
-        return db.query(Song).join(Song.artist).filter(Artist.ARTIST_NAME == artist).options(
+        return db.query(Song).join(Song.artist).join(Song.album).filter(Artist.ARTIST_NAME == artist).options(
             joinedload(Song.artist),
             joinedload(Song.album),
             joinedload(Song.genre)).all()

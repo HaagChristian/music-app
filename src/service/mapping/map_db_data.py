@@ -20,7 +20,8 @@ def map_search_db_data(db_result: List[Song]) -> List[MetadataFromSearch]:
             album=album_name,
             genre=genre_name,
             date=release_date,
-            duration=duration
+            duration=duration,
+            file_id=song.FILE_ID
         )
         mapped_output_data.append(metadata)
 

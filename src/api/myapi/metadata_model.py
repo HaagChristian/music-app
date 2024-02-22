@@ -26,3 +26,18 @@ class MetadataFromSearch(BaseModel):
     date: Optional[str] = None
     duration: Optional[float] = None
     file_id: int
+
+
+class MetadataToChange(BaseModel):
+    artists: Optional[List[Artist]] = None
+    genre: Optional[str] = None
+    album: Optional[str] = None
+    title: Optional[str] = None
+    file_id: int
+
+
+class MetadataId3Input(BaseModel):
+    artists: Optional[Artist] = Field(None, description='As string separated by ;')
+    genre: Optional[str] = None
+    album: Optional[str] = None
+    title: Optional[str] = None

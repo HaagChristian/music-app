@@ -64,3 +64,12 @@ def search_for_title_and_artist(db: Session, title: str, artist: str):
             joinedload(Song.artist),
             joinedload(Song.album),
             joinedload(Song.genre)).all()
+
+
+def get_file_by_id(db: Session, file_id: int):
+    return db.query(File).filter(File.FILE_ID == file_id). \
+        options(
+        joinedload(File.song).joinedload(Song.album),
+        joinedload(File.song).joinedload(Song.artist),
+        joinedload(File.song).joinedload(Song.genre)
+    ).all()

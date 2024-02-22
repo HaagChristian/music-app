@@ -1,4 +1,5 @@
-from sqlalchemy.orm import Session
+from sqlalchemy import and_
+from sqlalchemy.orm import Session, joinedload
 
 from src.api.myapi.metadata_model import MetadataResponse
 from src.database.musicDB.db_models import Album, File, Genre, Song, Artist, SongArtist
@@ -38,3 +39,28 @@ def add_file_and_metadata(db: Session, file, metadata: MetadataResponse):
 
     db.add(song)
     db.flush()
+
+
+def search_for_title_and_artist(db: Session, title: str, artist: str):
+    if title and artist:
+        return db.query(Song).filter(
+            and_(
+                Song.TITLE.like(title),
+                Artist.ARTIST_NAME == artist
+            )
+        ).options(
+            joinedload(Song.artist),
+            joinedload(Song.album),
+            joinedload(Song.genre)) \
+            .all()
+    elif title and not artist:
+        return db.query(Song).filter(Song.TITLE.like(title)).options(
+            joinedload(Song.artist),
+            joinedload(Song.album),
+            joinedload(Song.genre)).all()
+    else:
+        # only artist
+        return db.query(Song).join(Song.artist).filter(Artist.ARTIST_NAME == artist).options(
+            joinedload(Song.artist),
+            joinedload(Song.album),
+            joinedload(Song.genre)).all()

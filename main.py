@@ -10,7 +10,7 @@ from starlette.responses import JSONResponse
 
 from src.api.middleware.authjwt import AuthJwt
 from src.api.middleware.custom_exceptions.unauthorized import Unauthorized
-from src.api.routers import registration, user, id3_service
+from src.api.routers import registration, user, id3_service, general_endpoints
 
 version: str = "0.0.1"
 app_name: str = "MusicApp Service"
@@ -34,6 +34,7 @@ app = FastAPI(
 app.include_router(registration.router)
 app.include_router(user.router)
 app.include_router(id3_service.router)
+app.include_router(general_endpoints.router)
 
 # CORS is required to run api simultaneously with website on local machine
 # Allow localhost:8000 and 127.0.0.1:8000 to access the api
@@ -47,7 +48,7 @@ app.add_middleware(
 
 
 def auth_validate(request: Request):
-    if '/id3service' in request.url.path or 'user/me' in request.url.path:  # TODO: Add encoder Service
+    if '/id3service' in request.url.path or 'user/me' in request.url.path or 'search' in request.url.path:  # TODO: Add encoder Service
         try:
             # create HTTPAuthorizationCredentials for better token handling
             token_str = request.headers.get("authorization", None)

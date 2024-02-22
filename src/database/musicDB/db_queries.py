@@ -31,9 +31,9 @@ def add_file_and_metadata(db: Session, file, metadata: MetadataResponse):
         )
 
     for artist_name in metadata.artists:
-        artist_res = db.query(Artist).filter(Artist.ARTIST_NAME == artist_name).first()
+        artist_res = db.query(Artist).filter(Artist.ARTIST_NAME == artist_name.name).first()
         if not artist_res:
-            artist = Artist(ARTIST_NAME=artist_name)
+            artist = Artist(ARTIST_NAME=artist_name.name)
             song_artist = SongArtist(song=song, artist=artist)
             song.artist.append(song_artist)
 

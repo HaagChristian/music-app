@@ -6,7 +6,7 @@ from starlette.responses import Response
 
 from src.api.middleware.custom_exceptions.WrongFileType import WrongFileType
 from src.api.middleware.exceptions import exception_mapping
-from src.api.myapi.metadata_model import MetadataResponse
+from src.api.myapi.metadata_model import MetadataResponse, Artist
 from src.database.musicDB.db import get_db_music, commit_with_rollback_backup
 from src.database.musicDB.db_queries import add_file_and_metadata
 from src.settings.error_messages import NO_METADATA_FOUND, METADATA_VALIDATION_ERROR
@@ -37,7 +37,12 @@ def upload_file(response: Response, request: Request,
             raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=METADATA_VALIDATION_ERROR)
 
         # map the data to the response model so that the response is independent of the underlying service
-        metadata = MetadataResponse(**res.json())
+        list_of_artists = res.json().get('artists', [])
+        artists_objects = [Artist(name=artist) for artist in list_of_artists]
+
+        res_from_request = res.json()
+        res_from_request['artists'] = artists_objects
+        metadata = MetadataResponse(**res_from_request)
 
         # get file bytes
         file.file.seek(0)

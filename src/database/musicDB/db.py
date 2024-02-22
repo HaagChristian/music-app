@@ -6,7 +6,7 @@ from sqlalchemy.orm import sessionmaker, declarative_base, Session
 
 from src.settings.settings import SQLALCHEMY_DATABASE_URI_MUSIC
 
-engine_music = create_engine(SQLALCHEMY_DATABASE_URI_MUSIC, pool_size=1, max_overflow=4, echo=True)
+engine_music = create_engine(SQLALCHEMY_DATABASE_URI_MUSIC, pool_size=1, max_overflow=4, echo=False)
 
 SessionLocal_Music = sessionmaker(autocommit=False, autoflush=False, bind=engine_music)
 

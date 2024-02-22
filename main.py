@@ -11,6 +11,7 @@ from starlette.responses import JSONResponse
 from src.api.middleware.authjwt import AuthJwt
 from src.api.middleware.custom_exceptions.unauthorized import Unauthorized
 from src.api.routers import registration, user, id3_service, general_endpoints
+from src.settings.error_messages import MISSING_TOKEN
 
 version: str = "0.0.1"
 app_name: str = "MusicApp Service"
@@ -48,10 +49,12 @@ app.add_middleware(
 
 
 def auth_validate(request: Request):
-    if '/id3service' in request.url.path or 'user/me' in request.url.path or 'search' in request.url.path:  # TODO: Add encoder Service
+    if '/id3service' in request.url.path or 'user/me' in request.url.path or '/data/search' in request.url.path:  # TODO: Add encoder Service
         try:
             # create HTTPAuthorizationCredentials for better token handling
             token_str = request.headers.get("authorization", None)
+            if token_str is None:
+                raise Unauthorized(MISSING_TOKEN)
             prefix, token = token_str.split(" ", 1)
             token = HTTPAuthorizationCredentials(scheme=prefix, credentials=token)
 

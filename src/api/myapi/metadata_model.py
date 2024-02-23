@@ -1,6 +1,8 @@
 from typing import Optional, List
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, model_validator
+
+from src.settings.error_messages import MISSING_PARAMETER
 
 
 class Artist(BaseModel):
@@ -35,14 +37,15 @@ class MetadataToChange(BaseModel):
     title: Optional[str] = None
     file_id: int
 
-    # @model_validator(mode='before')
-    # def is_empty(self):
-    #     """
-    #     Checks whether all metadata fields are None
-    #     At least one metadata field should be passed
-    #     """
-    #     if set(self.keys()) == {'file_id'}:
-    #         raise ValueError(MISSING_PARAMETER)
+    @model_validator(mode='before')
+    def is_empty(self, values):
+        """
+        Checks whether all metadata fields are None
+        At least one metadata field should be passed
+        """
+        if set(self.keys()) == {'file_id'}:
+            raise ValueError(MISSING_PARAMETER)
+        return self
 
 
 class MetadataId3Input(BaseModel):
@@ -50,3 +53,11 @@ class MetadataId3Input(BaseModel):
     genre: Optional[str] = None
     album: Optional[str] = None
     title: Optional[str] = None
+
+
+class DBMetadata(BaseModel):
+    artists: Optional[str] = Field(None, description='As string separated by ;')
+    genre: Optional[str] = None
+    album: Optional[str] = None
+    title: Optional[str] = None
+    file_id: int

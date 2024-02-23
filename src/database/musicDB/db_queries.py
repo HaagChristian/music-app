@@ -1,7 +1,7 @@
 from sqlalchemy import and_
 from sqlalchemy.orm import Session, joinedload
 
-from src.api.myapi.metadata_model import MetadataResponse
+from src.api.myapi.metadata_model import MetadataResponse, DBMetadata
 from src.database.musicDB.db_models import Album, File, Genre, Song, Artist, SongArtist
 
 
@@ -73,3 +73,33 @@ def get_file_by_id(db: Session, file_id: int):
         joinedload(File.song).joinedload(Song.artist),
         joinedload(File.song).joinedload(Song.genre)
     ).first()
+
+
+def update_file_and_metadata(db: Session, file, metadata: DBMetadata):
+    if metadata.title:
+        db.query(Song).filter(Song.FILE_ID == metadata.file_id).update({Song.TITLE: metadata.title})
+    if metadata.genre:
+        genre_res = db.query(Genre).filter(Genre.GENRE_NAME == metadata.genre).first()
+        if not genre_res:
+            genre = Genre(GENRE_NAME=metadata.genre)
+            db.add(genre)
+            db.flush()
+            db.query(Song).filter(Song.FILE_ID == metadata.file_id).update({Song.GENRE_ID: genre.GENRE_ID})
+        else:
+            db.query(Song).filter(Song.FILE_ID == metadata.file_id).update({Song.GENRE_ID: genre_res.GENRE_ID})
+    if metadata.album:
+        # album_res = db.query(Album).filter(
+        #     and_(Album.ALBUM_NAME == metadata.album, Song.FILE_ID == metadata.file_id)).first()
+        # if not album_res:
+        #     album = Album(ALBUM_NAME=metadata.album)
+        #     db.add(album)
+        #     db.flush()
+        #
+        #     db.query(Song).filter(Song.FILE_ID == metadata.file_id).update({Song.ALBUM_ID: album.ALBUM_ID})
+        # else:
+        song = db.query(Song).filter(Song.FILE_ID == metadata.file_id).first()
+        db.query(Album).filter(Album.ALBUM_ID == Song.album.ALBUM_ID).update({Album.ALBUM_NAME: metadata.album})
+    if metadata.artists:
+        artist_names = metadata.artists.split(';')
+
+    db.flush()

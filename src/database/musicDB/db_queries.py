@@ -72,4 +72,4 @@ def get_file_by_id(db: Session, file_id: int):
         joinedload(File.song).joinedload(Song.album),
         joinedload(File.song).joinedload(Song.artist),
         joinedload(File.song).joinedload(Song.genre)
-    ).all()
+    ).first()

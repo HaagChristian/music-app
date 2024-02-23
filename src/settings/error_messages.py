@@ -15,3 +15,5 @@ METADATA_VALIDATION_ERROR: str = "An error occurred while validating the metadat
 MISSING_DATA: str = "Please specify at least one of the parameters"
 
 MISSING_TOKEN: str = "No token provided"
+
+MISSING_PARAMETER: str = "Please specify at least one metadata field"

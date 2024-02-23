@@ -1,6 +1,6 @@
 from typing import List
 
-from src.api.myapi.metadata_model import MetadataFromSearch, Artist
+from src.api.myapi.metadata_model import MetadataFromSearch, Artist, MetadataToChange, MetadataId3Input
 from src.database.musicDB.db_models import Song
 
 
@@ -26,3 +26,19 @@ def map_search_db_data(db_result: List[Song]) -> List[MetadataFromSearch]:
         mapped_output_data.append(metadata)
 
     return mapped_output_data
+
+
+def input_mapping_from_change_metadata(metadata_to_change: MetadataToChange) -> MetadataId3Input:
+    """
+    Change metadata model for input model of id3 service
+    """
+    if metadata_to_change.artists:
+        artist_names = [artist.name for artist in metadata_to_change.artists]
+        artist_str = ';'.join(artist_names)
+    else:
+        artist_str = None
+
+    data_for_id3 = MetadataId3Input(genre=metadata_to_change.genre, album=metadata_to_change.album,
+                                    title=metadata_to_change.title, artists=artist_str)
+
+    return data_for_id3

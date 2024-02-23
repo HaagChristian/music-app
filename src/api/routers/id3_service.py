@@ -48,7 +48,7 @@ def upload_file(response: Response, request: Request,
         file.file.seek(0)
         file_data = file.file.read()
 
-        add_file_and_metadata(db=db, file=file_data, metadata=metadata)
+        add_file_and_metadata(db=db, file=file_data, metadata=metadata, file_name=file.filename)
 
         if res.status_code == 206:
             response.status_code = status.HTTP_206_PARTIAL_CONTENT

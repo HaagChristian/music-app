@@ -5,9 +5,9 @@ from src.api.myapi.metadata_model import MetadataResponse
 from src.database.musicDB.db_models import Album, File, Genre, Song, Artist, SongArtist
 
 
-def add_file_and_metadata(db: Session, file, metadata: MetadataResponse):
+def add_file_and_metadata(db: Session, file, metadata: MetadataResponse, file_name: str):
     album = Album(ALBUM_NAME=metadata.album)
-    file = File(FILE_DATA=file, FILE_TYPE='mp3')
+    file = File(FILE_DATA=file, FILE_TYPE='mp3', FILE_NAME=file_name)
 
     genre_res = db.query(Genre).filter(Genre.GENRE_NAME == metadata.genre).first()
     if not genre_res:

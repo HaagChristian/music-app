@@ -53,6 +53,7 @@ class File(Base):
     FILE_ID: Mapped[int] = mapped_column(Integer, primary_key=True, nullable=False, index=True)
     FILE_DATA: Mapped[LargeBinary] = mapped_column(LargeBinary)
     FILE_TYPE: Mapped[str] = mapped_column(Enum('mp3'))
+    FILE_NAME: Mapped[str] = mapped_column(String(100))
 
     converted_file: Mapped['ConvertedFile'] = relationship(back_populates="file")
     song: Mapped['Song'] = relationship(back_populates="file")

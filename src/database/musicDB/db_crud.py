@@ -1,8 +1,11 @@
+"""This module contains the CRUD operations for the database."""
+
+
 from sqlalchemy import and_
 from sqlalchemy.orm import Session, joinedload
 
 from src.api.myapi.metadata_model import MetadataResponse, DBMetadata
-from src.database.musicDB.db_models import Album, File, Genre, Song, Artist, SongArtist
+from src.database.musicDB.db_models import Album, File, Genre, Song, Artist, SongArtist, ConvertedFile
 
 
 def add_file_and_metadata(db: Session, file, metadata: MetadataResponse, file_name: str):
@@ -41,38 +44,47 @@ def add_file_and_metadata(db: Session, file, metadata: MetadataResponse, file_na
     db.flush()
 
 
-def search_for_title_and_artist(db: Session, title: str, artist: str):
-    if title and artist:
-        return db.query(Song).join(Song.artist).join(Song.album).filter(
-            and_(
-                Song.TITLE.like(title),
-                Artist.ARTIST_NAME == artist
-            )
-        ).options(
-            joinedload(Song.artist),
-            joinedload(Song.album),
-            joinedload(Song.genre)) \
-            .all()
-    elif title and not artist:
-        return db.query(Song).join(Song.artist).join(Song.album).filter(Song.TITLE.like(title)).options(
-            joinedload(Song.artist),
-            joinedload(Song.album),
-            joinedload(Song.genre)).all()
-    else:
-        # only artist
-        return db.query(Song).join(Song.artist).join(Song.album).filter(Artist.ARTIST_NAME == artist).options(
-            joinedload(Song.artist),
-            joinedload(Song.album),
-            joinedload(Song.genre)).all()
+def add_converted_file(db: Session, original_file_id: int, file_data: bytes, file_type: str) -> ConvertedFile:
+    converted_file = ConvertedFile(
+        ORIGINAL_FILE_ID=original_file_id,
+        FILE_DATA=file_data,
+        FILE_TYPE=file_type
+    )
+    db.add(converted_file)
+    db.commit()
+    db.refresh(converted_file)
+    return converted_file
 
 
-def get_file_by_id(db: Session, file_id: int):
+def get_file_and_song_by_id(db: Session, file_id: int):
     return db.query(File).filter(File.FILE_ID == file_id). \
         options(
         joinedload(File.song).joinedload(Song.album),
         joinedload(File.song).joinedload(Song.artist),
         joinedload(File.song).joinedload(Song.genre)
     ).first()
+
+
+def get_song_and_file_by_song_id(db: Session, song_id: int):
+    return db.query(Song).filter(Song.SONG_ID == song_id). \
+        options(
+            joinedload(Song.file),
+            joinedload(Song.album),
+            joinedload(Song.genre),
+            joinedload(Song.artists)
+        ).first()
+
+
+def get_file_by_id(db: Session, file_id: int):
+    return db.query(File).filter(File.FILE_ID == file_id).first()
+
+
+def get_file_by_song_id(db: Session, song_id: int):
+    return db.query(File).join(Song).filter(Song.SONG_ID == song_id).first()
+
+
+def get_song_by_id(db: Session, song_id: int):
+    return db.query(Song).filter(Song.SONG_ID == song_id).first()
 
 
 def update_file_and_metadata(db: Session, file, metadata: DBMetadata):
@@ -103,3 +115,22 @@ def update_file_and_metadata(db: Session, file, metadata: DBMetadata):
         artist_names = metadata.artists.split(';')
 
     db.flush()
+
+
+"""Delete a song and its file from the database by song id."""
+def delete_song_and_file_by_id(db: Session, song_id: int):
+    song = db.query(Song).filter(Song.SONG_ID == song_id).first()
+    if not song:
+        return False
+
+    file_id = song.FILE_ID
+
+    if file_id:
+        db.query(File).filter(File.FILE_ID == file_id).delete()
+
+    db.query(Song).filter(Song.SONG_ID == song_id).delete()
+
+    db.commit()
+
+    return True
+

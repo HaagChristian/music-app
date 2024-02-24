@@ -8,9 +8,10 @@ from starlette.requests import Request
 
 from src.api.middleware.custom_exceptions.NoMetadataPassedError import NoMetadataPassedError
 from src.api.middleware.exceptions import exception_mapping
-from src.api.myapi.metadata_model import MetadataFromSearch, MetadataToChange, MetadataId3Input, DBMetadata
 from src.database.musicDB.db import get_db_music, commit_with_rollback_backup
-from src.database.musicDB.db_queries import search_for_title_and_artist, get_file_by_id, update_file_and_metadata
+from src.database.musicDB.db_crud import get_file_and_song_by_id, update_file_and_metadata
+from src.api.myapi.metadata_model import MetadataFromSearch, MetadataToChange, MetadataId3Input, DBMetadata
+from src.database.musicDB.db_search import search_for_title_and_artist
 from src.service.mapping.map_db_data import map_search_db_data, input_mapping_from_change_metadata
 from src.settings.error_messages import MISSING_DATA, DB_NO_RESULT_FOUND
 
@@ -46,7 +47,7 @@ def search(title: str = Query(default=None, description='Title of the song'),
 def change_metadata(request: Request, metadata_to_change: MetadataToChange, db=Depends(get_db_music)):
     try:
         mapped_input_data: MetadataId3Input = input_mapping_from_change_metadata(metadata_to_change)
-        db_res = get_file_by_id(db=db, file_id=metadata_to_change.file_id)
+        db_res = get_file_and_song_by_id(db=db, file_id=metadata_to_change.file_id)
 
         # no file found with specified file id
         if not db_res:

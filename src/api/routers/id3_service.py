@@ -8,7 +8,7 @@ from src.api.middleware.custom_exceptions.WrongFileType import WrongFileType
 from src.api.middleware.exceptions import exception_mapping
 from src.api.myapi.metadata_model import MetadataResponse, Artist
 from src.database.musicDB.db import get_db_music, commit_with_rollback_backup
-from src.database.musicDB.db_queries import add_file_and_metadata
+from src.database.musicDB.db_crud import add_file_and_metadata
 from src.settings.error_messages import NO_METADATA_FOUND, METADATA_VALIDATION_ERROR
 from src.settings.settings import REQUEST_TO_ID3_SERVICE
 

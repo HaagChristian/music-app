@@ -111,32 +111,20 @@ class SongArtist(SongArtistBase):
     class Config:
         orm_mode = True
 
-class SongRead(SongBase):
-    song_id: int
-    album: Album
-    genre: Genre
+
+class SongWithRelations(Song):
+    album: Optional[Album] = None
+    genre: Optional[Genre] = None
     artists: List[Artist] = []
 
     class Config:
         orm_mode = True
 
 class FileDetailModel(File):
-    song: SongRead
+    song: SongWithRelations
 
     class Config:
         orm_mode = True
 
-class SongDetailModel(BaseModel):
-    song_id: int
-    song_title: str
-    duration: Optional[int] = None
-    file_path: str
-    bit_rate: Optional[int] = None
-    sample_rate: Optional[int] = None
-    release_date: Optional[str] = None
-    album: Album
-    genre: Genre
-    artists: List[Artist] = []
-    file: File
-    class Config:
-        orm_mode = True
+class SongWithRelationsAndFile(SongWithRelations):
+    file: Optional[File] = None

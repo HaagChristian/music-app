@@ -17,3 +17,7 @@ MISSING_DATA: str = "Please specify at least one of the parameters"
 MISSING_TOKEN: str = "No token provided"
 
 MISSING_PARAMETER: str = "Please specify at least one metadata field"
+
+UNSUPPORTED_FORMAT_ERROR: str = "Requested format is not supported"
+
+FILE_CONVERSION_ERROR: str = "Error occurred during file conversion"

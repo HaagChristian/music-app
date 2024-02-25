@@ -59,7 +59,7 @@ def search_combined(db: Session = Depends(get_db_music), title: str = None, genr
 
 @router.get("/search/all_criteria", response_model=Dict[str, List[str]])
 def get_all_search_criteria(db: Session = Depends(get_db_music)):
-    criteria_dict = get_all_search_criteria(db)
+    criteria_dict = fetch_all_search_criteria(db)
     return criteria_dict
 
 

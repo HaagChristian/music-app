@@ -38,7 +38,7 @@ def search_songs_by_album(db: Session, album_name: str):
 '''
 
 
-def get_all_search_criteria(db: Session):
+def fetch_all_search_criteria(db: Session):
 
     titles = db.query(Song.title).distinct().all()
     titles_list = [title[0] for title in titles]

@@ -7,7 +7,7 @@ from src.api.myapi.music_db_models import Song, File, SongWithRelationsAndFile
 from src.database.musicDB.db_crud import get_song_by_id, get_file_by_id, get_file_by_song_id, \
     get_song_and_file_by_song_id
 from src.service.mapping.map_db_data import song_and_file_obj_to_model
-from src.settings.error_messages import NO_DB_RESULT_FOUND
+from src.settings.error_messages import DB_NO_RESULT_FOUND
 
 
 http_bearer = HTTPBearer()
@@ -22,7 +22,7 @@ router = APIRouter(
 def get_file(file_id: int, db: Session = Depends(get_db_music)):
     file = get_file_by_id(db, file_id)
     if not file:
-        raise NoResultFound(NO_DB_RESULT_FOUND)
+        raise NoResultFound(DB_NO_RESULT_FOUND)
     return file
 
 
@@ -30,7 +30,7 @@ def get_file(file_id: int, db: Session = Depends(get_db_music)):
 def get_file_by_song_id(song_id: int, db: Session = Depends(get_db_music)):
     file = get_file_by_song_id(db, song_id)
     if not file:
-        raise NoResultFound(NO_DB_RESULT_FOUND)
+        raise NoResultFound(DB_NO_RESULT_FOUND)
     return file
 
 
@@ -38,7 +38,7 @@ def get_file_by_song_id(song_id: int, db: Session = Depends(get_db_music)):
 def get_song(song_id: int, db: Session = Depends(get_db_music)):
     song = get_song_by_id(db, song_id)
     if not song:
-        raise NoResultFound(NO_DB_RESULT_FOUND)
+        raise NoResultFound(DB_NO_RESULT_FOUND)
     return song
 
 
@@ -48,7 +48,7 @@ def get_song(song_id: int, db: Session = Depends(get_db_music)):
 def get_song_and_file(song_id: int, db: Session = Depends(get_db_music)):
     song_obj = get_song_and_file_by_song_id(db, song_id)
     if not song_obj:
-        raise NoResultFound(NO_DB_RESULT_FOUND)
+        raise NoResultFound(DB_NO_RESULT_FOUND)
 
     return song_and_file_obj_to_model(song_obj)
 

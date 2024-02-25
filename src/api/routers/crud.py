@@ -17,7 +17,7 @@ router = APIRouter(
     dependencies=[Depends(http_bearer)]
 )
 
-
+# TODO: fix all endpoints
 @router.get("/file/{file_id}", response_model=File)
 def get_file(file_id: int, db: Session = Depends(get_db_music)):
     file = get_file_by_id(db, file_id)

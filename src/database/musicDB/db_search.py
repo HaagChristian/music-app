@@ -40,16 +40,16 @@ def search_songs_by_album(db: Session, album_name: str):
 
 def fetch_all_search_criteria(db: Session):
 
-    titles = db.query(Song.title).distinct().all()
+    titles = db.query(Song.TITLE).distinct().all()
     titles_list = [title[0] for title in titles]
 
-    artists = db.query(Artist.name).distinct().all()
+    artists = db.query(Artist.ARTIST_NAME).distinct().all()
     artists_list = [artist[0] for artist in artists]
 
-    albums = db.query(Album.name).distinct().all()
+    albums = db.query(Album.ALBUM_NAME).distinct().all()
     albums_list = [album[0] for album in albums]
 
-    genres = db.query(Genre.name).distinct().all()
+    genres = db.query(Genre.GENRE_NAME).distinct().all()
     genres_list = [genre[0] for genre in genres]
 
     criteria_dict = {

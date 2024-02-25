@@ -65,7 +65,7 @@ def get_song_and_file_by_song_id(db: Session, song_id: int):
         joinedload(Song.file),
         joinedload(Song.album),
         joinedload(Song.genre),
-        joinedload(Song.artists)
+        joinedload(Song.artist)
     ).first()
 
 

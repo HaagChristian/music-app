@@ -94,11 +94,8 @@ def song_obj_to_model(song_obj):
 
     return SongWithRelations(
         song_id=song_obj.SONG_ID,
-        song_title=song_obj.TITLE,
+        title=song_obj.TITLE,
         duration=song_obj.DURATION,
-        file_path=song_obj.file.FILE_NAME if song_obj.file else None,
-        bit_rate=song_obj.BIT_RATE,
-        sample_rate=song_obj.SAMPLE_RATE,
         release_date=song_obj.RELEASE_DATE.strftime("%Y-%m-%d") if song_obj.RELEASE_DATE else None,
         album=album_model,
         genre=genre_model,
@@ -123,9 +120,6 @@ def song_and_file_obj_to_model(song_obj):
         song_id=song_obj.SONG_ID,
         song_title=song_obj.TITLE,
         duration=song_obj.DURATION,
-        file_path=file_obj.FILE_NAME if file_obj else None,
-        bit_rate=song_obj.BIT_RATE,
-        sample_rate=song_obj.SAMPLE_RATE,
         release_date=song_obj.RELEASE_DATE.strftime("%Y-%m-%d") if song_obj.RELEASE_DATE else None,
         album=Album(album_id=album.ALBUM_ID, album_name=album.ALBUM_NAME) if album else None,
         genre=Genre(genre_id=genre.GENRE_ID, genre_name=genre.GENRE_NAME) if genre else None,

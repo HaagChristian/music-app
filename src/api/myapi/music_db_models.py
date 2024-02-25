@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 from typing import Optional, List
 
 
@@ -81,10 +81,7 @@ class SongBase(BaseModel):
     genre_id: int
     file_id: int
     duration: Optional[int] = None
-    file_path: str
-    bit_rate: Optional[int] = None
-    sample_rate: Optional[int] = None
-    song_title: str
+    title: str
     release_date: Optional[str] = None
 
 

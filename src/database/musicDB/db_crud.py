@@ -99,7 +99,12 @@ def update_file_and_metadata(db: Session, file, metadata: DBMetadata):
         db.query(Album).filter(Album.ALBUM_ID == album_id).update({Album.ALBUM_NAME: metadata.album})
     if metadata.artists:
         # get all artists for the song
-        artist_res = db.query(Artist).join(Artist.song).filter(Song.SONG_ID == metadata.song_id).all()
+        artist_res = db.query(Artist). \
+            join(SongArtist, Artist.ARTIST_ID == SongArtist.ARTIST_ID). \
+            join(Song, Song.SONG_ID == SongArtist.SONG_ID). \
+            filter(Song.SONG_ID == metadata.song_id). \
+            all()
+
         if not artist_res:  # song has no artists
             for artist in metadata.artists:
                 if_artist_not_in_db_add_to_db(db=db, artist_name=artist.name, song_id=metadata.song_id)

@@ -5,42 +5,8 @@ from src.database.musicDB.db_models import Song, Artist, Album, Genre
 
 
 """Search for songs in the database based on various criteria."""
-# simple search returns only song objects
-'''
-def search_song_by_title(db: Session, title: str):
-    return db.query(Song).filter(Song.TITLE.like(f"%{title}%")).all()
-
-
-def search_songs_by_genre(db: Session, genre_name: str):
-    return db.query(Song).join(Genre).filter(Genre.GENRE_NAME.like(f'%{genre_name}%')).all()
-
-
-def search_songs_by_artist(db: Session, artist_name: str):
-    return db.query(Song).join(Song.artist).join(Artist).filter(Artist.ARTIST_NAME.like(f'%{artist_name}%')).all()
-
-
-def search_songs_by_album(db: Session, album_name: str):
-    return db.query(Song).join(Album).filter(Album.ALBUM_NAME.like(f'%{album_name}%')).all()
-
-
-def search_songs_combined(db: Session, title: str = None, genre_name: str = None, artist_name: str = None,
-                          album_name: str = None):
-    query = db.query(Song)
-
-    if title:
-        query = query.filter(Song.TITLE.like(f'%{title}%'))
-    if genre_name:
-        query = query.join(Song.genre).filter(Genre.GENRE_NAME.like(f'%{genre_name}%'))
-    if artist_name:
-        query = query.join(Song.artist).join(Artist).filter(Artist.ARTIST_NAME.like(f'%{artist_name}%'))
-    if album_name:
-        query = query.join(Song.album).filter(Album.ALBUM_NAME.like(f'%{album_name}%'))
-
-    return query.all()
-'''
-# TODO: decide if we want to use the combined search or the simple search
-"""Search for songs in the database based on various criteria."""
 # combined search returns song objects with joined artist, album and genre
+'''
 def search_song_by_title(db: Session, title: str):
     return db.query(Song).filter(Song.TITLE.like(f"%{title}%")) \
         .options(
@@ -69,6 +35,32 @@ def search_songs_by_album(db: Session, album_name: str):
             joinedload(Song.genre),
             joinedload(Song.artists)
         ).all()
+'''
+
+
+def get_all_search_criteria(db: Session):
+
+    titles = db.query(Song.title).distinct().all()
+    titles_list = [title[0] for title in titles]
+
+    artists = db.query(Artist.name).distinct().all()
+    artists_list = [artist[0] for artist in artists]
+
+    albums = db.query(Album.name).distinct().all()
+    albums_list = [album[0] for album in albums]
+
+    genres = db.query(Genre.name).distinct().all()
+    genres_list = [genre[0] for genre in genres]
+
+    criteria_dict = {
+        "title": titles_list,
+        "interpret": artists_list,
+        "album": albums_list,
+        "genre": genres_list
+    }
+
+    return criteria_dict
+
 
 def search_songs_combined(db: Session, title: str = None, genre_name: str = None, artist_name: str = None,
                           album_name: str = None):

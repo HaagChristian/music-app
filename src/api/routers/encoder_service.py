@@ -7,7 +7,7 @@ from starlette import status
 from src.settings.error_messages import DB_NO_RESULT_FOUND, FILE_CONVERSION_ERROR, UNSUPPORTED_FORMAT_ERROR
 from src.settings.settings import REQUEST_TO_ENCODER_SERVICE
 from sqlalchemy.orm import Session
-from src.database.musicDB.db import get_db_music
+from src.database.musicDB.db import get_db_music, commit_with_rollback_backup
 from src.database.musicDB.db_crud import add_converted_file
 from src.database.musicDB.db_crud import get_file_by_id
 
@@ -22,6 +22,7 @@ router = APIRouter(
 
 
 @router.post("/convertfile")
+@commit_with_rollback_backup
 def convert_file(file_id: int, target_format: str, db: Session = Depends(get_db_music)):
     if target_format not in ["wav", "flac", "ogg"]:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=UNSUPPORTED_FORMAT_ERROR)

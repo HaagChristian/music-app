@@ -10,7 +10,7 @@ from starlette.responses import JSONResponse
 
 from src.api.middleware.authjwt import AuthJwt
 from src.api.middleware.custom_exceptions.unauthorized import Unauthorized
-from src.api.routers import registration, user, id3_service, general_endpoints
+from src.api.routers import registration, user, id3_service, general_endpoints, search, encoder_service, crud
 from src.settings.error_messages import MISSING_TOKEN
 
 version: str = "0.0.1"
@@ -36,6 +36,9 @@ app.include_router(registration.router)
 app.include_router(user.router)
 app.include_router(id3_service.router)
 app.include_router(general_endpoints.router)
+app.include_router(search.router)
+app.include_router(encoder_service.router)
+app.include_router(crud.router)
 
 # CORS is required to run api simultaneously with website on local machine
 # Allow localhost:8000 and 127.0.0.1:8000 to access the api

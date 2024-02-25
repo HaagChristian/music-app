@@ -51,8 +51,7 @@ def add_converted_file(db: Session, original_file_id: int, file_data: bytes, fil
         FILE_TYPE=file_type
     )
     db.add(converted_file)
-    db.commit()
-    db.refresh(converted_file)
+    db.flush()
     return converted_file
 
 
@@ -72,10 +71,6 @@ def get_song_and_file_by_song_id(db: Session, song_id: int):
 
 def get_file_by_id(db: Session, file_id: int):
     return db.query(File).filter(File.FILE_ID == file_id).first()
-
-
-def get_file_by_song_id(db: Session, song_id: int):
-    return db.query(File).join(Song).filter(Song.SONG_ID == song_id).first()
 
 
 def get_song_by_id(db: Session, song_id: int):

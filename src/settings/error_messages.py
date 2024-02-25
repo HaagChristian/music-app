@@ -18,6 +18,8 @@ MISSING_TOKEN: str = "No token provided"
 
 MISSING_PARAMETER: str = "Please specify at least one metadata field"
 
+MISSING_SEARCH_CRITERIA: str = "Please specify at least one search criteria"
+
 UNSUPPORTED_FORMAT_ERROR: str = "Requested format is not supported"
 
 FILE_CONVERSION_ERROR: str = "Error occurred during file conversion"

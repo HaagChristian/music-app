@@ -85,4 +85,3 @@ def search_combined(db: Session = Depends(get_db_music), title: str = None, genr
     songs = search_songs_combined(db, title, genre_name, artist_name, album_name)
     songs_with_rel = [song_obj_to_model(song) for song in songs]
     return songs_with_rel
-

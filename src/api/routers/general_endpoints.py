@@ -7,6 +7,7 @@ from fastapi.security import HTTPBearer
 from sqlalchemy.exc import NoResultFound
 from starlette import status
 from starlette.requests import Request
+from starlette.responses import Response
 
 from src.api.middleware.custom_exceptions.NoMetadataPassedError import NoMetadataPassedError
 from src.api.middleware.exceptions import exception_mapping
@@ -79,7 +80,7 @@ def change_metadata(request: Request, metadata_to_change: MetadataToChange, db=D
 
         file_helper_with_temp_file(db=db, res=res, metadata_db=metadata_db, filename=db_res.FILE_NAME)
 
-        return {"message": "Hello World"}
+        return Response(status_code=status.HTTP_200_OK, content="Metadata updated successfully")
 
     except (NoMetadataPassedError, NoResultFound) as e:
         http_status, detail_function = exception_mapping.get(type(e), (

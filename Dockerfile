@@ -5,7 +5,7 @@ WORKDIR /app
 
 
 COPY . .
-RUN pip install --no-cache-dir -r  requirements_for_window.txt
+RUN pip install --no-cache-dir -r  requirements_for_linux.txt
 
 EXPOSE 8000
 CMD ["uvicorn", "main:app", "--reload", "--host", "0.0.0.0", "--port", "8000"]

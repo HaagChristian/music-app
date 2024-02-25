@@ -1,7 +1,8 @@
 from typing import List
 
 from src.api.myapi.metadata_model import MetadataFromSearch, Artist, MetadataToChange, MetadataId3Input
-from src.api.myapi.music_db_models import FileDetailModel, SongWithRelationsAndFile, Album, Genre, File, SongWithRelations
+from src.api.myapi.music_db_models import FileDetailModel, SongWithRelationsAndFile, Album, Genre, File, \
+    SongWithRelations
 from src.database.musicDB.db_models import Song
 
 
@@ -38,9 +39,9 @@ def input_mapping_from_change_metadata(metadata_to_change: MetadataToChange) -> 
         artist_str = ';'.join(artist_names)
     else:
         artist_str = None
-
+    date_string = metadata_to_change.date.strftime("%Y-%m-%d") if metadata_to_change.date else None
     data_for_id3 = MetadataId3Input(genre=metadata_to_change.genre, album=metadata_to_change.album,
-                                    title=metadata_to_change.title, artists=artist_str)
+                                    title=metadata_to_change.title, artists=artist_str, date=date_string)
 
     return data_for_id3
 

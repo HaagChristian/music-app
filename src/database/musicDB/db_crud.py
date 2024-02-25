@@ -1,6 +1,5 @@
 """This module contains the CRUD operations for the database."""
 
-
 from sqlalchemy import and_
 from sqlalchemy.orm import Session, joinedload
 
@@ -56,23 +55,18 @@ def add_converted_file(db: Session, original_file_id: int, file_data: bytes, fil
     return converted_file
 
 
-def get_file_and_song_by_id(db: Session, file_id: int):
-    return db.query(File).filter(File.FILE_ID == file_id). \
-        options(
-        joinedload(File.song).joinedload(Song.album),
-        joinedload(File.song).joinedload(Song.artist),
-        joinedload(File.song).joinedload(Song.genre)
-    ).first()
+def get_file_by_song_id(db: Session, song_id: int):
+    return db.query(File).join(File.song).filter(Song.SONG_ID == song_id).first()
 
 
 def get_song_and_file_by_song_id(db: Session, song_id: int):
     return db.query(Song).filter(Song.SONG_ID == song_id). \
         options(
-            joinedload(Song.file),
-            joinedload(Song.album),
-            joinedload(Song.genre),
-            joinedload(Song.artists)
-        ).first()
+        joinedload(Song.file),
+        joinedload(Song.album),
+        joinedload(Song.genre),
+        joinedload(Song.artists)
+    ).first()
 
 
 def get_file_by_id(db: Session, file_id: int):
@@ -89,35 +83,69 @@ def get_song_by_id(db: Session, song_id: int):
 
 def update_file_and_metadata(db: Session, file, metadata: DBMetadata):
     if metadata.title:
-        db.query(Song).filter(Song.FILE_ID == metadata.file_id).update({Song.TITLE: metadata.title})
+        db.query(Song).filter(Song.SONG_ID == metadata.song_id).update({Song.TITLE: metadata.title})
     if metadata.genre:
         genre_res = db.query(Genre).filter(Genre.GENRE_NAME == metadata.genre).first()
         if not genre_res:
+            # genre does not exist in the database
             genre = Genre(GENRE_NAME=metadata.genre)
             db.add(genre)
             db.flush()
-            db.query(Song).filter(Song.FILE_ID == metadata.file_id).update({Song.GENRE_ID: genre.GENRE_ID})
+            db.query(Song).filter(Song.SONG_ID == metadata.song_id).update({Song.GENRE_ID: genre.GENRE_ID})
         else:
-            db.query(Song).filter(Song.FILE_ID == metadata.file_id).update({Song.GENRE_ID: genre_res.GENRE_ID})
+            db.query(Song).filter(Song.SONG_ID == metadata.song_id).update({Song.GENRE_ID: genre_res.GENRE_ID})
     if metadata.album:
-        # album_res = db.query(Album).filter(
-        #     and_(Album.ALBUM_NAME == metadata.album, Song.FILE_ID == metadata.file_id)).first()
-        # if not album_res:
-        #     album = Album(ALBUM_NAME=metadata.album)
-        #     db.add(album)
-        #     db.flush()
-        #
-        #     db.query(Song).filter(Song.FILE_ID == metadata.file_id).update({Song.ALBUM_ID: album.ALBUM_ID})
-        # else:
-        song = db.query(Song).filter(Song.FILE_ID == metadata.file_id).first()
-        db.query(Album).filter(Album.ALBUM_ID == Song.album.ALBUM_ID).update({Album.ALBUM_NAME: metadata.album})
+        album_id = db.query(Song).filter(Song.SONG_ID == metadata.song_id).first().ALBUM_ID
+        db.query(Album).filter(Album.ALBUM_ID == album_id).update({Album.ALBUM_NAME: metadata.album})
     if metadata.artists:
-        artist_names = metadata.artists.split(';')
+        # get all artists for the song
+        artist_res = db.query(Artist).join(Artist.song).filter(Song.SONG_ID == metadata.song_id).all()
+        if not artist_res:  # song has no artists
+            for artist in metadata.artists:
+                if_artist_not_in_db_add_to_db(db=db, artist_name=artist.name, song_id=metadata.song_id)
+        else:
+            for artist in metadata.artists:
+                if artist.name not in [a.ARTIST_NAME for a in artist_res]:  # artist does not belong to the song
+                    if_artist_not_in_db_add_to_db(db=db, artist_name=artist.name, song_id=metadata.song_id)
+
+            for song_artist in artist_res:
+                if song_artist.ARTIST_NAME not in [a.name for a in metadata.artists]:
+                    # artist is attached to the song in the database, but was removed with the metadata change
+                    # --> remove artist from song
+                    db.query(SongArtist).filter(and_(SongArtist.SONG_ID == metadata.song_id,
+                                                     SongArtist.ARTIST_ID == song_artist.ARTIST_ID)).delete()
+
+    if metadata.date:
+        db.query(Song).filter(Song.SONG_ID == metadata.song_id).update({Song.RELEASE_DATE: metadata.date})
+
+    # update file data
+    file_id = db.query(Song).filter(Song.SONG_ID == metadata.song_id).first().FILE_ID
+    db.query(File).filter(File.FILE_ID == file_id).update({File.FILE_DATA: file})
 
     db.flush()
 
 
+def is_artist_in_db(db: Session, artist_name: str):
+    return db.query(Artist).filter(Artist.ARTIST_NAME == artist_name).first()
+
+
+def if_artist_not_in_db_add_to_db(db: Session, artist_name: str, song_id: int):
+    artist_in_db = is_artist_in_db(db, artist_name)
+    if not artist_in_db:  # artist does not exist in the database
+        artist = Artist(ARTIST_NAME=artist_name)
+        db.add(artist)
+        db.flush()
+        song_artist = SongArtist(SONG_ID=song_id, ARTIST_ID=artist.ARTIST_ID)
+        db.add(song_artist)
+    else:
+        song_artist = SongArtist(SONG_ID=song_id, ARTIST_ID=artist_in_db.ARTIST_ID)
+        db.add(song_artist)
+    db.flush()
+
+
 """Delete a song and its file from the database by song id."""
+
+
 def delete_song_and_file_by_id(db: Session, song_id: int):
     song = db.query(Song).filter(Song.SONG_ID == song_id).first()
     if not song:
@@ -133,4 +161,3 @@ def delete_song_and_file_by_id(db: Session, song_id: int):
     db.commit()
 
     return True
-

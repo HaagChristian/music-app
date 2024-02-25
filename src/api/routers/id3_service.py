@@ -9,6 +9,7 @@ from src.api.middleware.exceptions import exception_mapping
 from src.api.myapi.metadata_model import MetadataResponse, Artist
 from src.database.musicDB.db import get_db_music, commit_with_rollback_backup
 from src.database.musicDB.db_crud import add_file_and_metadata
+from src.service.helper import get_file_bytes
 from src.settings.error_messages import NO_METADATA_FOUND, METADATA_VALIDATION_ERROR
 from src.settings.settings import REQUEST_TO_ID3_SERVICE
 
@@ -44,11 +45,7 @@ def upload_file(response: Response, request: Request,
         res_from_request['artists'] = artists_objects
         metadata = MetadataResponse(**res_from_request)
 
-        # get file bytes
-        file.file.seek(0)
-        file_data = file.file.read()
-
-        add_file_and_metadata(db=db, file=file_data, metadata=metadata, file_name=file.filename)
+        add_file_and_metadata(db=db, file=get_file_bytes(file=file), metadata=metadata, file_name=file.filename)
 
         if res.status_code == 206:
             response.status_code = status.HTTP_206_PARTIAL_CONTENT

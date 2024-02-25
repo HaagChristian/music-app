@@ -21,3 +21,5 @@ MISSING_PARAMETER: str = "Please specify at least one metadata field"
 UNSUPPORTED_FORMAT_ERROR: str = "Requested format is not supported"
 
 FILE_CONVERSION_ERROR: str = "Error occurred during file conversion"
+
+UPDATE_METADATA_FROM_FILE: str = "Error occurred while updating the metadata from the file. Please try again later"

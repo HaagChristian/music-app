@@ -34,9 +34,12 @@ def add_file_and_metadata(db: Session, file, metadata: MetadataResponse, file_na
 
     for artist_name in metadata.artists:
         artist_res = db.query(Artist).filter(Artist.ARTIST_NAME == artist_name.name).first()
-        if not artist_res:
+        if not artist_res:  # artist does not exist in the database
             artist = Artist(ARTIST_NAME=artist_name.name)
             song_artist = SongArtist(song=song, artist=artist)
+            song.artist.append(song_artist)
+        else:
+            song_artist = SongArtist(song=song, artist=artist_res)
             song.artist.append(song_artist)
 
     db.add(song)

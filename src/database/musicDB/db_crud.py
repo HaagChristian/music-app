@@ -8,41 +8,39 @@ from src.database.musicDB.db_models import Album, File, Genre, Song, Artist, Son
 
 
 def add_file_and_metadata(db: Session, file, metadata: MetadataResponse, file_name: str):
-    album = Album(ALBUM_NAME=metadata.album)
-    file = File(FILE_DATA=file, FILE_TYPE='mp3', FILE_NAME=file_name)
+    album = None
+    if metadata.album:
+        album = Album(ALBUM_NAME=metadata.album)
 
-    genre_res = db.query(Genre).filter(Genre.GENRE_NAME == metadata.genre).first()
-    if not genre_res:
-        genre = Genre(GENRE_NAME=metadata.genre)
-        song = Song(
-            DURATION=metadata.duration,
-            TITLE=metadata.title,
-            RELEASE_DATE=metadata.date,
-            file=file,
-            album=album,
-            genre=genre
-        )
-    else:
-        song = Song(
-            DURATION=metadata.duration,
-            TITLE=metadata.title,
-            RELEASE_DATE=metadata.date,
-            file=file,
-            album=album,
-            GENRE_ID=genre_res.GENRE_ID
-        )
+    file_data = File(FILE_DATA=file, FILE_TYPE='mp3', FILE_NAME=file_name)
 
-    for artist_name in metadata.artists:
-        artist_res = db.query(Artist).filter(Artist.ARTIST_NAME == artist_name.name).first()
-        if not artist_res:  # artist does not exist in the database
-            artist = Artist(ARTIST_NAME=artist_name.name)
+    genre = None
+    if metadata.genre:
+        genre = db.query(Genre).filter(Genre.GENRE_NAME == metadata.genre).first()
+        if not genre:
+            genre = Genre(GENRE_NAME=metadata.genre)
+
+    song = Song(
+        DURATION=metadata.duration,
+        TITLE=metadata.title,
+        RELEASE_DATE=metadata.date,
+        file=file_data,
+        album=album,
+        genre=genre
+    )
+
+    if metadata.artists:
+        for artist_name in metadata.artists:
+            artist = db.query(Artist).filter(Artist.ARTIST_NAME == artist_name.name).first()
+            if not artist:
+                # Wenn der Künstler nicht gefunden wird, erstellen Sie einen neuen Künstler
+                artist = Artist(ARTIST_NAME=artist_name.name)
+                db.add(artist)
+                db.flush()  # Fügen Sie den neuen Künstler zur Datenbank hinzu
             song_artist = SongArtist(song=song, artist=artist)
             song.artist.append(song_artist)
-        else:
-            song_artist = SongArtist(song=song, artist=artist_res)
-            song.artist.append(song_artist)
 
-    db.add(song)
+    db.add(song)  # Fügen Sie den Song zur Datenbank hinzu
     db.flush()
 
 

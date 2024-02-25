@@ -1,7 +1,7 @@
 from typing import List
 
 from sqlalchemy import String, ForeignKey, Integer, LargeBinary, Date, Enum
-from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy.orm import Mapped, mapped_column, relationship, backref
 
 from src.database.musicDB.db import Base
 
@@ -32,8 +32,12 @@ class SongArtist(Base):
     ARTIST_ID: Mapped[int] = mapped_column(Integer, ForeignKey('artists.ARTIST_ID'), primary_key=True, nullable=False,
                                            index=True)
 
-    song: Mapped['Song'] = relationship(back_populates="artist")
-    artist: Mapped['Artist'] = relationship(back_populates="song")
+    song: Mapped['Song'] = relationship(backref=backref("cycle",
+                                                        cascade="save-update, merge, "
+                                                                "delete, delete-orphan"))
+    artist: Mapped['Artist'] = relationship(backref=backref("cycle",
+                                                            cascade="save-update, merge, "
+                                                                    "delete, delete-orphan"))
 
 
 class ConvertedFile(Base):

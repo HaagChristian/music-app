@@ -88,8 +88,8 @@ class Album(AlbumBase):
 
 class SimpleSong(BaseModel):
     song_id: int
-    title: str
-    duration: Optional[int] = None
+    title: Optional[str] = None
+    duration: Optional[float] = None
     release_date: Optional[str] = None
 
     class Config:

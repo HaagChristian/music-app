@@ -1,5 +1,5 @@
 import io
-
+import httpx
 import requests
 from fastapi import APIRouter, HTTPException, Depends, UploadFile, Request
 from fastapi.security import HTTPBearer
@@ -26,7 +26,7 @@ router = APIRouter(
 # TODO: fix
 @router.post("/convertfile/{file_id}", response_model=File)
 @commit_with_rollback_backup
-def convert_file(request: Request, file_id: int, target_format: str, db: Session = Depends(get_db_music)):
+async def convert_file(request: Request, file_id: int, target_format: str, db: Session = Depends(get_db_music)):
     if target_format not in ["wav", "flac", "ogg"]:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=UNSUPPORTED_FORMAT_ERROR)
 
@@ -37,11 +37,14 @@ def convert_file(request: Request, file_id: int, target_format: str, db: Session
     src_format = file.FILE_TYPE
     file_content = io.BytesIO(file.FILE_DATA)
     upload_file = UploadFile(filename=file.FILE_NAME, file=file_content)
-    files = {'file': upload_file}
+    files = {'file': upload_file.file}
     #files = {'file': (file.file_name, file.file_data, src_format)}
     data = {'src_format': src_format, 'target_format': target_format}
 
-    response = requests.post(f"http://{REQUEST_TO_ENCODER_SERVICE}:8002/api/encoder/convert", files=files, data=data)
+    async with httpx.AsyncClient() as client:
+        response = await client.post(f"http://{REQUEST_TO_ENCODER_SERVICE}:8002/api/encoder/convert", files=files,
+                                     data=data)
+    #response = requests.post(f"http://{REQUEST_TO_ENCODER_SERVICE}:8002/api/encoder/convert", files=files, data=data)
     if response.status_code != 200:
         raise HTTPException(status_code=response.status_code, detail=FILE_CONVERSION_ERROR)
 

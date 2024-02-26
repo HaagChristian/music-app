@@ -18,12 +18,18 @@ router = APIRouter(
 )
 
 # TODO: fix all endpoints
-@router.get("/file/{file_id}", response_model=SimpleFile)
+@router.get("/simplefile/{file_id}", response_model=SimpleFile)
 def get_file(file_id: int, db: Session = Depends(get_db_music)):
     file = get_file_by_id(db, file_id)
     if not file:
         raise NoResultFound(DB_NO_RESULT_FOUND)
-    return file
+    simple_file = SimpleFile(
+        file_id=file.FILE_ID,
+        file_data=file.FILE_DATA,
+        file_type=file.FILE_TYPE,
+        file_name=file.FILE_NAME
+    )
+    return simple_file
 
 
 @router.get("/file/{song_id}", response_model=File)

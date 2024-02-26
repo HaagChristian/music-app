@@ -45,6 +45,8 @@ pip install -r requirements_for_windows.txt
 
 ```
 
+After startup the Music Service is available on `http://127.0.0.1:8000/api'
+
 ## Error handling
 
 The application handles all known exceptions and raises errors to the user in a user-friendly manner.

@@ -12,7 +12,7 @@ class Artist(Base):
     ARTIST_ID: Mapped[int] = mapped_column(Integer, primary_key=True)
     ARTIST_NAME: Mapped[str] = mapped_column(String(100))
 
-    song: Mapped['SongArtist'] = relationship(back_populates="artist")
+    song: Mapped['SongArtist'] = relationship(back_populates="artist", overlaps='cycle')
 
 
 class Album(Base):
@@ -32,12 +32,12 @@ class SongArtist(Base):
     ARTIST_ID: Mapped[int] = mapped_column(Integer, ForeignKey('artists.ARTIST_ID'), primary_key=True, nullable=False,
                                            index=True)
 
-    song: Mapped['Song'] = relationship(backref=backref("cycle",
-                                                        cascade="save-update, merge, "
-                                                                "delete, delete-orphan"))
-    artist: Mapped['Artist'] = relationship(backref=backref("cycle",
-                                                            cascade="save-update, merge, "
-                                                                    "delete, delete-orphan"))
+    song: Mapped['Song'] = relationship(backref=backref('cycle',
+                                                        cascade='save-update, merge, '
+                                                                'delete, delete-orphan'))
+    artist: Mapped['Artist'] = relationship(backref=backref('cycle',
+                                                            cascade='save-update, merge, '
+                                                                    'delete, delete-orphan'))
 
 
 class ConvertedFile(Base):
@@ -83,7 +83,7 @@ class Song(Base):
     TITLE: Mapped[str] = mapped_column(String(100))
     RELEASE_DATE: Mapped[Date] = mapped_column(Date)
 
-    artist: Mapped[List['SongArtist']] = relationship(back_populates="song")
+    artist: Mapped[List['SongArtist']] = relationship(back_populates="song", overlaps='cycle')
     file: Mapped['File'] = relationship(back_populates="song")
     album: Mapped['Album'] = relationship(back_populates="song")
     genre: Mapped['Genre'] = relationship(back_populates="song")

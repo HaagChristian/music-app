@@ -1,11 +1,6 @@
 from pydantic import BaseModel, EmailStr, field_validator
 
 
-class SignInRequestModel(BaseModel):
-    email: str
-    password: str
-
-
 class Address(BaseModel):
     street: str
     house_number: int
@@ -13,6 +8,28 @@ class Address(BaseModel):
     city: str
     country: str
     state: str
+
+
+class TokenModel(BaseModel):
+    access_token: str
+    refresh_token: str
+
+
+class AuthUser(BaseModel):
+    id: int
+    first_name: str
+    last_name: str
+    email: str
+
+    class Config:
+        from_attributes = True
+
+
+# Input models
+
+class SignInRequestModel(BaseModel):
+    email: str
+    password: str
 
 
 class SignUpRequestModel(BaseModel):
@@ -31,27 +48,14 @@ class SignUpRequestModel(BaseModel):
         return v
 
 
-class SignUpUser(BaseModel):
+# Output models
+
+class SignUpUserResponse(BaseModel):
     email: EmailStr
     first_name: str
     last_name: str
     username: str
 
 
-class TokenModel(BaseModel):
-    access_token: str
-    refresh_token: str
-
-
 class UserAuthResponseModel(BaseModel):
     token: TokenModel
-
-
-class AuthUser(BaseModel):
-    id: int
-    first_name: str
-    last_name: str
-    email: str
-
-    class Config:
-        from_attributes = True

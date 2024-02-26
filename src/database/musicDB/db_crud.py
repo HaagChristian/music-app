@@ -83,28 +83,29 @@ def get_song_by_id(db: Session, song_id: int):
 def update_file_and_metadata(db: Session, file, metadata: DBMetadata):
     if metadata.title:
         db.query(Song).filter(Song.SONG_ID == metadata.song_id).update({Song.TITLE: metadata.title})
+
     if metadata.genre:
         genre_res = db.query(Genre).filter(Genre.GENRE_NAME == metadata.genre).first()
-        if not genre_res:
-            # genre does not exist in the database
+        if not genre_res:  # genre does not exist in the database
             genre = Genre(GENRE_NAME=metadata.genre)
             db.add(genre)
             db.flush()
             db.query(Song).filter(Song.SONG_ID == metadata.song_id).update({Song.GENRE_ID: genre.GENRE_ID})
         else:
             db.query(Song).filter(Song.SONG_ID == metadata.song_id).update({Song.GENRE_ID: genre_res.GENRE_ID})
+
     if metadata.album:
         album_id = db.query(Song).filter(Song.SONG_ID == metadata.song_id).first().ALBUM_ID
         db.query(Album).filter(Album.ALBUM_ID == album_id).update({Album.ALBUM_NAME: metadata.album})
+
     if metadata.artists:
         # get all artists for the song
         artist_res = db.query(Artist). \
             join(SongArtist, Artist.ARTIST_ID == SongArtist.ARTIST_ID). \
             join(Song, Song.SONG_ID == SongArtist.SONG_ID). \
-            filter(Song.SONG_ID == metadata.song_id). \
-            all()
+            filter(Song.SONG_ID == metadata.song_id).all()
 
-        if not artist_res:  # song has no artists
+        if not artist_res:  # song has no artists in the database
             for artist in metadata.artists:
                 if_artist_not_in_db_add_to_db(db=db, artist_name=artist.name, song_id=metadata.song_id)
         else:

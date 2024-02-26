@@ -10,6 +10,8 @@ from src.settings.error_messages import DB_NO_RESULT_FOUND
 
 
 class AuthProvider:
+    """ Class to provide authentication services """
+
     PWD_CONTEXT = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
     def verify_password(self, plain_password, hashed_password) -> bool:

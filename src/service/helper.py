@@ -14,9 +14,11 @@ def get_file_bytes(file: UploadFile) -> bytes:
 
 
 def file_helper_with_temp_file(db, res, metadata_db, filename):
+    """ Helper function to use a temporary file to upload the file to the database """
     file_content = res.content
     with tempfile.NamedTemporaryFile() as temp_file:
         temp_file.write(file_content)
         temp_file.seek(0)
         upload_file = UploadFile(temp_file, filename=filename)
+
         update_file_and_metadata(db=db, file=get_file_bytes(file=upload_file), metadata=metadata_db)

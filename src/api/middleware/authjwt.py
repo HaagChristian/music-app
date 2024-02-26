@@ -11,6 +11,12 @@ from src.settings.settings import TIMEZONE, TOKEN_EXPIRE_MINS, SECRET_KEY, ALGOR
 
 
 class AuthJwt:
+    """ Authentication class to:
+        - decode token
+        - encode token
+        - create refresh token
+    """
+
     def __init__(self):
         self._decoded_jwt: dict = {}
 
@@ -25,7 +31,7 @@ class AuthJwt:
             if datetime.fromtimestamp(decoded_token['exp']) >= datetime.now():
                 self._decoded_jwt = decoded_token
                 return self._decoded_jwt
-        except (ExpiredSignatureError, DecodeError) as e:  # Decode Error occurs when Bearer is invalid
+        except (ExpiredSignatureError, DecodeError):  # Decode Error occurs when Bearer is invalid
             return None
 
     def refresh_token(self, refresh_token: HTTPAuthorizationCredentials) -> str:

@@ -16,11 +16,13 @@ from src.settings.error_messages import MISSING_TOKEN
 version: str = "0.0.1"
 app_name: str = "MusicApp Service"
 instance_uuid: str = str(uuid.uuid4())
-app_description: str = "This is a simple music app service. It provides a RESTful API to manage users and their music preferences. " \
+app_description: str = "This is a simple music app service. " \
+                       "It provides a RESTful API to manage users and their music preferences. " \
                        "It is part of a microservice architecture and is designed to be scalable and fault-tolerant. " \
-                       "It is written in Python using the FastAPI framework and uses a MySQL database to store user and music data. " \
-                       "It is deployed in a Docker container."
-contact_name: str = "Christian Haag"
+                       "It is written in Python using the FastAPI framework and uses a MySQL database" \
+                       " to store user and music data. "
+
+contact_name: str = "Selina Weh / Christian Haag"
 
 http_bearer = HTTPBearer()
 
@@ -77,6 +79,7 @@ def auth_validate(request: Request):
 
 @app.middleware("http")
 async def middleware_auth_check(request: Request, call_next):
+    """ Middleware to check if the user has a valid jwt token to access the endpoints """
     res = auth_validate(request)
 
     if res is not None:

@@ -10,28 +10,25 @@ class Artist(BaseModel):
     name: str
 
 
-class MetadataResponse(BaseModel):
-    title: str
+class DBMetadata(BaseModel):
     artists: Optional[List[Artist]] = None
-    album: Optional[str] = None
     genre: Optional[str] = None
-    date: Optional[str] = None
-    duration: Optional[float] = None
-    failed_tags: Optional[List[str]] = Field(None,
-                                             description='List of metadata keys which are not in the metadata of the file')
-
-
-class MetadataFromSearch(BaseModel):
+    album: Optional[str] = None
     title: Optional[str] = None
-    artists: Optional[List[Artist]] = None
-    album: Optional[str] = None
-    genre: Optional[str] = None
     date: Optional[str] = None
-    duration: Optional[float] = None
-    file_id: int
+    song_id: int
+
+    # map the date from string to date
+    @field_validator('date')
+    def map_date(cls, value):
+        if value:
+            value = datetime.strptime(value, "%Y-%m-%d").date()
+        return value
 
 
-class MetadataToChange(BaseModel):
+# Input models
+
+class MetadataToChangeRequest(BaseModel):
     artists: Optional[List[Artist]] = None
     genre: Optional[str] = None
     album: Optional[str] = None
@@ -64,16 +61,25 @@ class MetadataId3Input(BaseModel):
     date: Optional[str] = Field(None, description='Date in format YYYY-MM-DD')
 
 
-class DBMetadata(BaseModel):
-    artists: Optional[List[Artist]] = None
-    genre: Optional[str] = None
-    album: Optional[str] = None
-    title: Optional[str] = None
-    date: Optional[str] = None
-    song_id: int
+# Output models
 
-    @field_validator('date')
-    def map_date(cls, value):
-        if value:
-            value = datetime.strptime(value, "%Y-%m-%d").date()
-        return value
+class MetadataResponse(BaseModel):
+    title: str
+    artists: Optional[List[Artist]] = None
+    album: Optional[str] = None
+    genre: Optional[str] = None
+    date: Optional[str] = None
+    duration: Optional[float] = None
+    failed_tags: Optional[List[str]] = Field(None,
+                                             description='List of metadata keys which are not in the '
+                                                         'metadata of the file')
+
+
+class MetadataFromSearch(BaseModel):
+    title: Optional[str] = None
+    artists: Optional[List[Artist]] = None
+    album: Optional[str] = None
+    genre: Optional[str] = None
+    date: Optional[str] = None
+    duration: Optional[float] = None
+    file_id: int

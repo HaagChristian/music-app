@@ -1,6 +1,6 @@
 from typing import List
 
-from src.api.myapi.metadata_model import MetadataFromSearch, Artist, MetadataToChange, MetadataId3Input
+from src.api.myapi.metadata_model import MetadataFromSearch, Artist, MetadataToChangeRequest, MetadataId3Input
 from src.api.myapi.music_db_models import FileDetailModel, SongWithRelationsAndFile, Album, Genre, File, \
     SongWithRelations
 from src.database.musicDB.db_models import Song
@@ -30,7 +30,7 @@ def map_search_db_data(db_result: List[Song]) -> List[MetadataFromSearch]:
     return mapped_output_data
 
 
-def input_mapping_from_change_metadata(metadata_to_change: MetadataToChange) -> MetadataId3Input:
+def input_mapping_from_change_metadata(metadata_to_change: MetadataToChangeRequest) -> MetadataId3Input:
     """
     Change metadata model for input model of id3 service
     """
@@ -40,10 +40,9 @@ def input_mapping_from_change_metadata(metadata_to_change: MetadataToChange) -> 
     else:
         artist_str = None
     date_string = metadata_to_change.date.strftime("%Y-%m-%d") if metadata_to_change.date else None
-    data_for_id3 = MetadataId3Input(genre=metadata_to_change.genre, album=metadata_to_change.album,
-                                    title=metadata_to_change.title, artists=artist_str, date=date_string)
 
-    return data_for_id3
+    return MetadataId3Input(genre=metadata_to_change.genre, album=metadata_to_change.album,
+                            title=metadata_to_change.title, artists=artist_str, date=date_string)
 
 
 def file_obj_to_model(file_obj):
@@ -126,4 +125,3 @@ def song_and_file_obj_to_model(song_obj):
         artists=artists,
         file=file_model
     )
-

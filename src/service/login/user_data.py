@@ -11,6 +11,7 @@ def get_current_user(jwt_payload: str, db: Session):
     user_data = User.get_user_by_email(db=db, email=jwt_payload)
 
     if not user_data:
+        # wrong credentials because no user is found with the given email
         raise NoResultFound(DB_NO_RESULT_FOUND)
 
     # Map db model to output model

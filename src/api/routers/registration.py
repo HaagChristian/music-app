@@ -10,7 +10,8 @@ from src.api.middleware.auth import AuthProvider
 from src.api.middleware.authjwt import AuthJwt
 from src.api.middleware.custom_exceptions.user_already_exist import UserAlreadyExistException
 from src.api.middleware.exceptions import exception_mapping
-from src.api.myapi.registration_model import UserAuthResponseModel, SignUpRequestModel, SignInRequestModel, SignUpUser, \
+from src.api.myapi.registration_model import UserAuthResponseModel, SignUpRequestModel, SignInRequestModel, \
+    SignUpUserResponse, \
     TokenModel, AuthUser
 from src.database.userDB.db import get_db_user, commit_on_signup
 from src.service.registration.signup_user import register_user, signin_user
@@ -23,14 +24,19 @@ auth_handler = AuthProvider()
 http_bearer = HTTPBearer()
 
 
-@router.post("/auth/signup", response_model=SignUpUser)
+@router.post("/auth/signup", response_model=SignUpUserResponse)
 @commit_on_signup
 def signup(request: Request, user: SignUpRequestModel, response: Response, db=Depends(get_db_user)):
-    """ API call to register a new user/account
+    """
+        API call to register a new user/account
+
         :param request: Request is used for the decorator commit_on_signup
+        :param user: SignUpRequestModel contains the user details
+        :param response: Response is used for the decorator commit_on_signup
+        :param db: Database connection
     """
     try:
-        output_user: SignUpUser = register_user(user_model=user, db=db)
+        output_user: SignUpUserResponse = register_user(user_model=user, db=db)
         response.status_code = status.HTTP_201_CREATED
         return output_user
     except (UserAlreadyExistException, NoResultFound) as e:
@@ -43,7 +49,7 @@ def signup(request: Request, user: SignUpRequestModel, response: Response, db=De
 def signin_api(user_details: SignInRequestModel, db=Depends(get_db_user)):
     """ API call to sign in a user/account and return a token and refresh token """
     try:
-        user: AuthUser = signin_user(user_details.email, user_details.password, db=db)
+        user: AuthUser = signin_user(email=user_details.email, password=user_details.password, db=db)
         access_token = AuthJwt.encode_token(user.email)
         refresh_token = AuthJwt.encode_refresh_token(user.email)
 

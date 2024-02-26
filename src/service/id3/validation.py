@@ -6,8 +6,10 @@ from src.settings.error_messages import WRONG_MME_TYPE
 
 
 def check_input_file(file: UploadFile):
-    # read magic number from file and specify the mime type due to security reasons
-    # the content type could be set to mpeg, but the file could be a different type
+    """
+        Read magic number from file and specify the mime type due to security reasons
+        The content type could be set to mpeg, but the file could be a different type
+    """
 
     accepted_mime_types = ["audio/mpeg", "audio/mp3", "application/octet-stream"]  # octet stream is a fallback
     file_content_buffer = file.file.read(2048)

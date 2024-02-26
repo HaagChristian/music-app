@@ -1,8 +1,8 @@
+from src.database.db import get_db
 from starlette.testclient import TestClient
 
 from main import app
-from src.api.myapi.registration_model import SignUpRequestModel, Address, SignUpUser
-from src.database.db import get_db
+from src.api.myapi.registration_model import SignUpRequestModel, Address, SignUpUserResponse
 from tests.conftest import mock_db
 
 app.dependency_overrides[get_db] = mock_db()
@@ -25,7 +25,7 @@ signup_instance = SignUpRequestModel(
 )
 
 # Response data
-response_signup = SignUpUser(
+response_signup = SignUpUserResponse(
     email="example@example.com",
     first_name="John",
     last_name="Doe",

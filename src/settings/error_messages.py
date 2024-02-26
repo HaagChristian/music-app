@@ -24,7 +24,8 @@ UNSUPPORTED_FORMAT_ERROR: str = "Requested format is not supported"
 
 FILE_CONVERSION_ERROR: str = "Error occurred during file conversion"
 
-UPDATE_METADATA_FROM_FILE: str = "Error occurred while updating the metadata from the file. Please try again later"
+UPDATE_METADATA_FROM_FILE: str = "Error occurred while updating the metadata from the file. Please try again later. " \
+                                 "If the error persists, please contact the administrator"
 
 MISSING_TITLE_FROM_METADATA: str = "Title is missing in the metadata. " \
                                    "Please make sure that at least a title is included in the metadata"

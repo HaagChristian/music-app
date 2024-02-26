@@ -20,36 +20,7 @@ router = APIRouter(
     tags=["Encoder Service"],
     dependencies=[Depends(http_bearer)]
 )
-'''
-# TODO: fix
-@router.post("/convertfile/{file_id}", response_model=File)
-@commit_with_rollback_backup
-async def convert_file(request: Request, file_id: int, target_format: str, db: Session = Depends(get_db_music)):
-    if target_format not in ["wav", "flac", "ogg"]:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=UNSUPPORTED_FORMAT_ERROR)
 
-    file = get_file_by_id(db, file_id)
-    if not file:
-        raise NoResultFound(DB_NO_RESULT_FOUND)
-
-    src_format = file.FILE_TYPE
-    file_content = io.BytesIO(file.FILE_DATA)
-    upload_file = UploadFile(filename=file.FILE_NAME, file=file_content)
-    files = {'file': upload_file.file}
-    #files = {'file': (file.file_name, file.file_data, src_format)}
-    data = {'src_format': src_format, 'target_format': target_format}
-
-    async with httpx.AsyncClient() as client:
-        response = await client.post(f"http://{REQUEST_TO_ENCODER_SERVICE}:8002/api/encoder/convert", files=files,
-                                     data=data)
-    #response = requests.post(f"http://{REQUEST_TO_ENCODER_SERVICE}:8002/api/encoder/convert", files=files, data=data)
-    if response.status_code != 200:
-        raise HTTPException(status_code=response.status_code, detail=FILE_CONVERSION_ERROR)
-
-    converted_file = add_converted_file(db, file_id, response.content, target_format)
-
-    return converted_file
-'''
 @router.post("/convertfile/{file_id}", response_model=ConvertedFile)
 @commit_with_rollback_backup
 def convert_file(request: Request, file_id: int, target_format: str, db: Session = Depends(get_db_music)):
@@ -57,20 +28,26 @@ def convert_file(request: Request, file_id: int, target_format: str, db: Session
         raise HTTPException(status_code=400, detail=UNSUPPORTED_FORMAT_ERROR)
 
     file = get_file_by_id(db, file_id)
+    print(file)
     if not file:
         raise NoResultFound(DB_NO_RESULT_FOUND)
 
     src_format = file.FILE_TYPE
     file_content = io.BytesIO(file.FILE_DATA)
+    print(file_content)
     upload_file = UploadFile(filename=file.FILE_NAME, file=file_content)
+    print(upload_file.file.read())
     files = {'file': ('file', upload_file.file.read(), upload_file.content_type)}
+    print(files)
     data = {'src_format': src_format, 'target_format': target_format}
+    print(data)
 
     res = requests.post(f"http://{REQUEST_TO_ENCODER_SERVICE}:8002/api/encoder/convert", files=files, data=data)
     if res.status_code != 200:
         raise HTTPException(status_code=res.status_code, detail=FILE_CONVERSION_ERROR)
 
     converted_data = map_converted_data_from_request_call(res)
+    print(converted_data)
 
     converted_file = handle_conversion_response(converted_data, file_id, db)
 

@@ -35,14 +35,16 @@ def convert_file(request: Request, file_id: int, target_format: str, db: Session
     src_format = file.FILE_TYPE
     file_content = io.BytesIO(file.FILE_DATA)
     print(f"file_content:{file_content}")
-    upload_file = UploadFile(filename=file.FILE_NAME, file=file_content)
-    print(upload_file)
+    #upload_file = UploadFile(filename=file.FILE_NAME, file=file_content)
+    #print(upload_file)
     #files = {'file': ('file', upload_file, 'multipart/form-data')}
     #print(f"files:{files}")
+    files = {'file': (file.FILE_NAME, file_content, 'multipart/form-data')}
+
     data = {'src_format': src_format, 'target_format': target_format}
     print(f"data: {data}")
 
-    res = requests.post(f"http://{REQUEST_TO_ENCODER_SERVICE}:8002/api/encoder/convert", files={'file': file.upload_file}, data=data)
+    res = requests.post(f"http://{REQUEST_TO_ENCODER_SERVICE}:8002/api/encoder/convert", files=files, data=data)
     if res.status_code != 200:
         raise HTTPException(status_code=res.status_code, detail=FILE_CONVERSION_ERROR)
 

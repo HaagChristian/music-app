@@ -50,7 +50,7 @@ def file_obj_to_model(file_obj):
     song = file_obj.song
     album = song.album if song.album else None
     genre = song.genre if song.genre else None
-    artists = [Artist(artist_id=artist.ARTIST_ID, artist_name=artist.ARTIST_NAME) for artist in song.artists]
+    artist = [Artist(artist_id=artist.ARTIST_ID, artist_name=artist.ARTIST_NAME) for artist in song.artist]
 
     song_model = SongWithRelations(
         song_id=song.SONG_ID,
@@ -62,7 +62,7 @@ def file_obj_to_model(file_obj):
         release_date=song.RELEASE_DATE.strftime("%Y-%m-%d") if song.RELEASE_DATE else None,
         album=Album(album_id=album.ALBUM_ID, album_name=album.ALBUM_NAME) if album else None,
         genre=Genre(genre_id=genre.GENRE_ID, genre_name=genre.GENRE_NAME) if genre else None,
-        artists=artists
+        artist=artist
     )
 
     file_model = File(
@@ -89,7 +89,7 @@ def song_obj_to_model(song_obj):
     artists_model = [Artist(
         artist_id=artist.ARTIST_ID,
         artist_name=artist.ARTIST_NAME
-    ) for artist in song_obj.artists]
+    ) for artist in song_obj.artist]
 
     return SongWithRelations(
         song_id=song_obj.SONG_ID,
@@ -98,7 +98,7 @@ def song_obj_to_model(song_obj):
         release_date=song_obj.RELEASE_DATE.strftime("%Y-%m-%d") if song_obj.RELEASE_DATE else None,
         album=album_model,
         genre=genre_model,
-        artists=artists_model
+        artist=artists_model
     )
 
 
@@ -106,7 +106,7 @@ def song_and_file_obj_to_model(song_obj):
     """Converts SQLAlchemy song object to SongWithRelationsAndFile."""
     album = song_obj.album if song_obj.album else None
     genre = song_obj.genre if song_obj.genre else None
-    artists = [Artist(artist_id=artist.ARTIST_ID, artist_name=artist.ARTIST_NAME) for artist in song_obj.artists]
+    artist = [Artist(artist_id=artist.ARTIST_ID, artist_name=artist.ARTIST_NAME) for artist in song_obj.artist]
     file_obj = song_obj.file if song_obj.file else None
 
     file_model = File(
@@ -122,6 +122,6 @@ def song_and_file_obj_to_model(song_obj):
         release_date=song_obj.RELEASE_DATE.strftime("%Y-%m-%d") if song_obj.RELEASE_DATE else None,
         album=Album(album_id=album.ALBUM_ID, album_name=album.ALBUM_NAME) if album else None,
         genre=Genre(genre_id=genre.GENRE_ID, genre_name=genre.GENRE_NAME) if genre else None,
-        artists=artists,
+        artist=artist,
         file=file_model
     )

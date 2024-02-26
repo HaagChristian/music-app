@@ -13,8 +13,9 @@ class FileCreate(FileBase):
 
 
 class File(FileBase):
-    model_config = ConfigDict(from_attributes=True)
     file_id: int
+    class Config:
+        from_attributes = True
 
 
 class ConvertedFileBase(BaseModel):
@@ -27,8 +28,9 @@ class ConvertedFileCreate(ConvertedFileBase):
 
 
 class ConvertedFile(ConvertedFileBase):
-    model_config = ConfigDict(from_attributes=True)
     conversion_id: int
+    class Config:
+        from_attributes = True
 
 
 class ArtistBase(BaseModel):
@@ -40,8 +42,9 @@ class ArtistCreate(ArtistBase):
 
 
 class Artist(ArtistBase):
-    model_config = ConfigDict(from_attributes=True)
     artist_id: int
+    class Config:
+        from_attributes = True
 
 
 class GenreBase(BaseModel):
@@ -53,8 +56,9 @@ class GenreCreate(GenreBase):
 
 
 class Genre(GenreBase):
-    model_config = ConfigDict(from_attributes=True)
     genre_id: int
+    class Config:
+        from_attributes = True
 
 
 class AlbumBase(BaseModel):
@@ -67,8 +71,9 @@ class AlbumCreate(AlbumBase):
 
 
 class Album(AlbumBase):
-    model_config = ConfigDict(from_attributes=True)
     album_id: int
+    class Config:
+        from_attributes = True
 
 
 class SongBase(BaseModel):
@@ -85,8 +90,9 @@ class SongCreate(SongBase):
 
 
 class Song(SongBase):
-    model_config = ConfigDict(from_attributes=True)
     song_id: int
+    class Config:
+        from_attributes = True
 
 
 class SongArtistBase(BaseModel):
@@ -99,19 +105,23 @@ class SongArtistCreate(SongArtistBase):
 
 
 class SongArtist(SongArtistBase):
-    model_config = ConfigDict(from_attributes=True)
+    class Config:
+        from_attributes = True
 
 
 class SongWithRelations(Song):
-    model_config = ConfigDict(from_attributes=True)
     album: Optional[Album] = None
     genre: Optional[Genre] = None
     artists: List[Artist] = []
+    class Config:
+        from_attributes = True
 
 
 class FileDetailModel(File):
-    model_config = ConfigDict(from_attributes=True)
     song: SongWithRelations
+    class Config:
+        from_attributes = True
+
 
 
 class SongWithRelationsAndFile(SongWithRelations):

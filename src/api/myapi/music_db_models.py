@@ -2,6 +2,17 @@ from pydantic import BaseModel, ConfigDict
 from typing import Optional, List
 
 
+
+class SimpleFile(BaseModel):
+    file_id: int
+    file_data: bytes
+    file_type: str
+    file_name: str
+
+    class Config:
+        from_attributes = True
+
+
 class FileBase(BaseModel):
     file_data: bytes
     file_type: str
@@ -72,6 +83,15 @@ class AlbumCreate(AlbumBase):
 
 class Album(AlbumBase):
     album_id: int
+    class Config:
+        from_attributes = True
+
+class SimpleSong(BaseModel):
+    song_id: int
+    title: str
+    duration: Optional[int] = None
+    release_date: Optional[str] = None
+
     class Config:
         from_attributes = True
 

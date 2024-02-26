@@ -3,7 +3,7 @@ from fastapi.security import HTTPBearer
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import NoResultFound
 from src.database.musicDB.db import get_db_music
-from src.api.myapi.music_db_models import Song, File, SongWithRelationsAndFile
+from src.api.myapi.music_db_models import Song, File, SongWithRelationsAndFile, SimpleSong, SimpleFile
 from src.database.musicDB.db_crud import get_song_by_id, get_file_by_id, get_file_by_song_id, \
     get_song_and_file_by_song_id
 from src.service.mapping.map_db_data import song_and_file_obj_to_model
@@ -18,7 +18,7 @@ router = APIRouter(
 )
 
 # TODO: fix all endpoints
-@router.get("/file/{file_id}", response_model=File)
+@router.get("/file/{file_id}", response_model=SimpleFile)
 def get_file(file_id: int, db: Session = Depends(get_db_music)):
     file = get_file_by_id(db, file_id)
     if not file:
@@ -41,6 +41,12 @@ def get_song(song_id: int, db: Session = Depends(get_db_music)):
         raise NoResultFound(DB_NO_RESULT_FOUND)
     return song
 
+@router.get("/simplesong/{song_id}", response_model=SimpleSong)
+def get_simple_song(song_id: int, db: Session = Depends(get_db_music)):
+    song = get_song_by_id(db, song_id)
+    if not song:
+        raise NoResultFound(DB_NO_RESULT_FOUND)
+    return song
 
 
 """returns song with file and relations accessed by song_id"""

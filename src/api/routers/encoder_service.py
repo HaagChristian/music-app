@@ -28,26 +28,26 @@ def convert_file(request: Request, file_id: int, target_format: str, db: Session
         raise HTTPException(status_code=400, detail=UNSUPPORTED_FORMAT_ERROR)
 
     file = get_file_by_id(db, file_id)
-    print(file)
+    print(f"file:{file}")
     if not file:
         raise NoResultFound(DB_NO_RESULT_FOUND)
 
     src_format = file.FILE_TYPE
     file_content = io.BytesIO(file.FILE_DATA)
-    print(file_content)
+    print(f"file_content:{file_content}")
     upload_file = UploadFile(filename=file.FILE_NAME, file=file_content)
-    print(upload_file.file.read())
+    #print(upload_file.file.read())
     files = {'file': ('file', upload_file.file.read(), upload_file.content_type)}
-    print(files)
+    print(f"files:{files}")
     data = {'src_format': src_format, 'target_format': target_format}
-    print(data)
+    print(f"data: {data}")
 
     res = requests.post(f"http://{REQUEST_TO_ENCODER_SERVICE}:8002/api/encoder/convert", files=files, data=data)
     if res.status_code != 200:
         raise HTTPException(status_code=res.status_code, detail=FILE_CONVERSION_ERROR)
 
     converted_data = map_converted_data_from_request_call(res)
-    print(converted_data)
+    print(f"converted_data:{converted_data}")
 
     converted_file = handle_conversion_response(converted_data, file_id, db)
 

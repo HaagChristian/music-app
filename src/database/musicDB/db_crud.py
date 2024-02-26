@@ -50,12 +50,11 @@ def get_song_by_title(db: Session, metadata: MetadataResponse):
 def handle_conversion_response(response: ConversionResponse, original_file_id: int, db: Session) -> ConvertedFile:
     converted_file = ConvertedFile(
         ORIGINAL_FILE_ID=original_file_id,
-        FILE_DATA=response.content,
-        FILE_TYPE=response.content_type
+        FILE_TYPE=response.file_type,
+        FILE_DATA=response.file_data
     )
     db.add(converted_file)
-    db.commit()
-    db.refresh(converted_file)
+    db.flush()
     return converted_file
 
 

@@ -45,9 +45,8 @@ class ConvertedFile(ConvertedFileBase):
         from_attributes = True
 
 class ConversionResponse(BaseModel):
-    filename: str
-    content_type: str
-    content: bytes = Field(..., description="The content of the converted file as a byte string.")
+    file_type: str
+    file_data: str
 
 class ArtistBase(BaseModel):
     artist_name: str

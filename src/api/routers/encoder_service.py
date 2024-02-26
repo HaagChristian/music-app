@@ -39,7 +39,7 @@ def convert_file(request: Request, file_id: int, target_format: str, db: Session
     #print(upload_file)
     #files = {'file': ('file', upload_file, 'multipart/form-data')}
     #print(f"files:{files}")
-    files = {'file': (file.FILE_NAME, file_content, 'multipart/form-data')}
+    files = {'file': (file.FILE_NAME, file_content, 'audio/mpeg')}
 
     data = {'src_format': src_format, 'target_format': target_format}
     print(f"data: {data}")

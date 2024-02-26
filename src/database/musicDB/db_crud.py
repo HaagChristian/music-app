@@ -63,21 +63,27 @@ def get_file_by_song_id(db: Session, song_id: int):
 
 
 def get_song_and_file_by_song_id(db: Session, song_id: int):
-    return db.query(Song).filter(Song.SONG_ID == song_id). \
+    song_obj = db.query(Song).filter(Song.SONG_ID == song_id). \
         options(
         joinedload(Song.file),
         joinedload(Song.album),
         joinedload(Song.genre),
         joinedload(Song.artist)
     ).first()
+    print(song_obj)
+    return song_obj
 
 
 def get_file_by_id(db: Session, file_id: int):
-    return db.query(File).filter(File.FILE_ID == file_id).first()
+    file = db.query(File).filter(File.FILE_ID == file_id).first()
+    print(file)
+    return file
 
 
 def get_song_by_id(db: Session, song_id: int):
-    return db.query(Song).filter(Song.SONG_ID == song_id).first()
+    song = db.query(Song).filter(Song.SONG_ID == song_id).first()
+    print(song)
+    return song
 
 
 def update_file_and_metadata(db: Session, file, metadata: DBMetadata):

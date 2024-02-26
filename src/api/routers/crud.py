@@ -46,7 +46,13 @@ def get_simple_song(song_id: int, db: Session = Depends(get_db_music)):
     song = get_song_by_id(db, song_id)
     if not song:
         raise NoResultFound(DB_NO_RESULT_FOUND)
-    return song
+    simple_song = SimpleSong(
+        song_id=song.SONG_ID,
+        title=song.TITLE,
+        duration=song.DURATION,
+        release_date=song.RELEASE_DATE.strftime("%Y-%m-%d") if song.RELEASE_DATE else None
+    )
+    return simple_song
 
 
 """returns song with file and relations accessed by song_id"""

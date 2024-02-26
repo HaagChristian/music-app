@@ -1,5 +1,5 @@
 from functools import wraps
-
+from fastapi import HTTPException
 from fastapi import Depends, Request
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base, Session
@@ -30,4 +30,17 @@ def commit_with_rollback_backup(func):
         db.commit()
         return response
 
+    return wrapper
+
+#TODO: test and remove then
+def commit_or_rollback_backup(func):
+    @wraps(func)
+    def wrapper(*args, db: Session = Depends(get_db_music), **kwargs):
+        try:
+            response = func(*args, db=db, **kwargs)
+            db.commit()
+            return response
+        except Exception as e:
+            db.rollback()
+            raise HTTPException(status_code=500, detail=f"An error occurred: {str(e)}")
     return wrapper

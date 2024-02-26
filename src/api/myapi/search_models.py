@@ -11,7 +11,6 @@ class SearchCriteria(BaseModel):
 
     @model_validator(mode='before')
     def check_at_least_one_field(self, values):
-        if not any([values.get('title'), values.get('genre_name'),
-                    values.get('artist_name'), values.get('album_name')]):
+        if not any(value for value in values.values() if value is not None):
             raise ValueError(MISSING_SEARCH_CRITERIA)
         return values

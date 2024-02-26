@@ -5,6 +5,7 @@ WORKDIR /app
 
 
 COPY . .
+RUN apt-get update && apt-get install -y  libmagic-dev
 RUN pip install --no-cache-dir -r  requirements_for_linux.txt
 
 EXPOSE 8000

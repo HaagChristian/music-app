@@ -4,6 +4,7 @@ from sqlalchemy import and_
 from sqlalchemy.orm import Session, joinedload
 
 from src.api.myapi.metadata_model import MetadataResponse, DBMetadata
+from src.api.myapi.music_db_models import ConversionResponse
 from src.database.musicDB.db_models import Album, File, Genre, Song, Artist, SongArtist, ConvertedFile
 
 
@@ -45,6 +46,17 @@ def add_file_and_metadata(db: Session, file, metadata: MetadataResponse, file_na
 
 def get_song_by_title(db: Session, metadata: MetadataResponse):
     return db.query(Song).filter(Song.TITLE == metadata.title).first()
+
+def handle_conversion_response(response: ConversionResponse, original_file_id: int, db: Session) -> ConvertedFile:
+    converted_file = ConvertedFile(
+        ORIGINAL_FILE_ID=original_file_id,
+        FILE_DATA=response.content,
+        FILE_TYPE=response.content_type
+    )
+    db.add(converted_file)
+    db.commit()
+    db.refresh(converted_file)
+    return converted_file
 
 
 def add_converted_file(db: Session, original_file_id: int, file_data: bytes, file_type: str) -> ConvertedFile:

@@ -1,4 +1,4 @@
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, Field
 from typing import Optional, List
 
 
@@ -31,6 +31,7 @@ class File(FileBase):
 
 class ConvertedFileBase(BaseModel):
     original_file_id: int
+    file_data: bytes
     file_type: str
 
 
@@ -43,6 +44,10 @@ class ConvertedFile(ConvertedFileBase):
     class Config:
         from_attributes = True
 
+class ConversionResponse(BaseModel):
+    filename: str
+    content_type: str
+    content: bytes = Field(..., description="The content of the converted file as a byte string.")
 
 class ArtistBase(BaseModel):
     artist_name: str

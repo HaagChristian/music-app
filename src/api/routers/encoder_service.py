@@ -10,10 +10,9 @@ from src.settings.error_messages import DB_NO_RESULT_FOUND, FILE_CONVERSION_ERRO
 from src.settings.settings import REQUEST_TO_ENCODER_SERVICE
 from sqlalchemy.orm import Session
 from src.database.musicDB.db import get_db_music, commit_with_rollback_backup
-from src.database.musicDB.db_crud import add_converted_file
+from src.database.musicDB.db_crud import add_converted_file, handle_conversion_response
 from src.database.musicDB.db_crud import get_file_by_id
-from src.api.myapi.music_db_models import File
-
+from src.api.myapi.music_db_models import File, ConversionResponse, ConvertedFile
 
 http_bearer = HTTPBearer()
 
@@ -22,7 +21,7 @@ router = APIRouter(
     tags=["Encoder Service"],
     dependencies=[Depends(http_bearer)]
 )
-
+'''
 # TODO: fix
 @router.post("/convertfile/{file_id}", response_model=File)
 @commit_with_rollback_backup
@@ -49,5 +48,33 @@ async def convert_file(request: Request, file_id: int, target_format: str, db: S
         raise HTTPException(status_code=response.status_code, detail=FILE_CONVERSION_ERROR)
 
     converted_file = add_converted_file(db, file_id, response.content, target_format)
+
+    return converted_file
+'''
+@router.post("/convertfile/{file_id}", response_model=ConvertedFile)
+@commit_with_rollback_backup
+async def convert_file(request: Request, file_id: int, target_format: str, db: Session = Depends(get_db_music)):
+    if target_format not in ["wav", "flac", "ogg"]:
+        raise HTTPException(status_code=400, detail="Unsupported format error.")
+
+    file = get_file_by_id(db, file_id)
+    if not file:
+        raise HTTPException(status_code=404, detail="File not found.")
+
+    src_format = file.FILE_TYPE
+    file_content = io.BytesIO(file.FILE_DATA)
+    upload_file = UploadFile(filename=file.FILE_NAME, file=file_content)
+    files = {'file': ('file', upload_file.file.read(), upload_file.content_type)}
+    data = {'src_format': src_format, 'target_format': target_format}
+
+    async with httpx.AsyncClient() as client:
+        response = await client.post(f"http://{REQUEST_TO_ENCODER_SERVICE}:8002/api/encoder/convert", files=files, data=data)
+
+    if response.status_code != 200:
+        raise HTTPException(status_code=response.status_code, detail="File conversion error.")
+
+    conversion_response = ConversionResponse.parse_raw(response.content)
+
+    converted_file = await handle_conversion_response(conversion_response, file_id, db)
 
     return converted_file

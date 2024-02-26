@@ -25,3 +25,8 @@ UNSUPPORTED_FORMAT_ERROR: str = "Requested format is not supported"
 FILE_CONVERSION_ERROR: str = "Error occurred during file conversion"
 
 UPDATE_METADATA_FROM_FILE: str = "Error occurred while updating the metadata from the file. Please try again later"
+
+MISSING_TITLE_FROM_METADATA: str = "Title is missing in the metadata. " \
+                                   "Please make sure that at least a title is included in the metadata"
+
+SONG_ALREADY_IN_DB: str = "Song already exists in the database"

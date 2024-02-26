@@ -4,13 +4,16 @@ from fastapi.security import HTTPBearer
 from starlette import status
 from starlette.responses import Response
 
+from src.api.middleware.custom_exceptions.MissingTitleFromMetadataError import MissingTitleFromMetadataError
 from src.api.middleware.custom_exceptions.WrongFileType import WrongFileType
 from src.api.middleware.exceptions import exception_mapping
 from src.api.myapi.metadata_model import MetadataResponse, Artist
 from src.database.musicDB.db import get_db_music, commit_with_rollback_backup
-from src.database.musicDB.db_crud import add_file_and_metadata
+from src.database.musicDB.db_crud import add_file_and_metadata, get_song_by_title
 from src.service.helper import get_file_bytes
-from src.settings.error_messages import NO_METADATA_FOUND, METADATA_VALIDATION_ERROR
+from src.service.id3.validation import check_input_file
+from src.settings.error_messages import NO_METADATA_FOUND, METADATA_VALIDATION_ERROR, MISSING_TITLE_FROM_METADATA, \
+    SONG_ALREADY_IN_DB
 from src.settings.settings import REQUEST_TO_ID3_SERVICE
 
 http_bearer = HTTPBearer()
@@ -28,7 +31,7 @@ def upload_file(response: Response, request: Request,
                 db=Depends(get_db_music)):
     try:
         # input validation
-        # check_input_file(file) # TODO: wider auskommentieren sobald eine gute Testdatei da ist
+        check_input_file(file)
 
         res = requests.post(f"http://{REQUEST_TO_ID3_SERVICE}:8001/api/metadata/get-data", files={'file': file.file})
         if res.status_code not in [200, 206]:
@@ -43,14 +46,21 @@ def upload_file(response: Response, request: Request,
 
         res_from_request = res.json()
         res_from_request['artists'] = artists_objects
+
+        if res_from_request.get('title', None) is None:
+            raise MissingTitleFromMetadataError(MISSING_TITLE_FROM_METADATA)
         metadata = MetadataResponse(**res_from_request)
+
+        is_song_already_in_db = get_song_by_title(db=db, metadata=metadata)
+        if is_song_already_in_db:
+            raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=SONG_ALREADY_IN_DB)
 
         add_file_and_metadata(db=db, file=get_file_bytes(file=file), metadata=metadata, file_name=file.filename)
 
-        if res.status_code == 206:
+        if res.status_code == 206:  # not all metadata are available in the file
             response.status_code = status.HTTP_206_PARTIAL_CONTENT
         return metadata
-    except WrongFileType as e:
+    except (WrongFileType, MissingTitleFromMetadataError) as e:
         http_status, detail_function = exception_mapping.get(type(e), (
             status.HTTP_500_INTERNAL_SERVER_ERROR, lambda e: str(e.args[0])))
         raise HTTPException(status_code=http_status, detail=detail_function(e))

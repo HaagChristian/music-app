@@ -11,7 +11,7 @@ class Artist(BaseModel):
 
 
 class MetadataResponse(BaseModel):
-    title: Optional[str] = None
+    title: str
     artists: Optional[List[Artist]] = None
     album: Optional[str] = None
     genre: Optional[str] = None

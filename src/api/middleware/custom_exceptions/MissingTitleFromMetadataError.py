@@ -1,0 +1,2 @@
+class MissingTitleFromMetadataError(Exception):
+    pass

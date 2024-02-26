@@ -43,6 +43,10 @@ def add_file_and_metadata(db: Session, file, metadata: MetadataResponse, file_na
     db.flush()
 
 
+def get_song_by_title(db: Session, metadata: MetadataResponse):
+    return db.query(Song).filter(Song.TITLE == metadata.title).first()
+
+
 def add_converted_file(db: Session, original_file_id: int, file_data: bytes, file_type: str) -> ConvertedFile:
     converted_file = ConvertedFile(
         ORIGINAL_FILE_ID=original_file_id,

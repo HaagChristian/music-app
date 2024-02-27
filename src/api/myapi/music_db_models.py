@@ -69,8 +69,8 @@ class SimpleSong(BaseModel):
 
 
 class SongBase(BaseModel):
-    album_id: int
-    genre_id: int
+    #album_id: int
+    #genre_id: int
     file_id: int
     duration: Optional[int] = None
     title: Optional[str] = None

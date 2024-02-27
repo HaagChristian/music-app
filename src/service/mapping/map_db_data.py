@@ -83,6 +83,7 @@ def map_simple_song_to_model(song_obj):
 
 def map_song_with_rel_to_model(song_obj):
     """Converts SQLAlchemy song object to SongWithRelations model."""
+    '''
     album_model = Album(
         album_id=song_obj.album.ALBUM_ID,
         album_name=song_obj.album.ALBUM_NAME
@@ -100,15 +101,19 @@ def map_song_with_rel_to_model(song_obj):
             artist_id=artist.ARTIST_ID,
             artist_name=artist.ARTIST_NAME
         ))
-
+    '''
+    artists = [Artist(name=artist.artist.ARTIST_NAME) for artist in (song_obj.artist or [])]
+    album_name = song_obj.album.ALBUM_NAME if song_obj.album else None
+    genre_name = song_obj.genre.GENRE_NAME if song_obj.genre else None
     return SongWithRelations(
         song_id=song_obj.SONG_ID,
         title=song_obj.TITLE,
         duration=song_obj.DURATION,
         release_date=song_obj.RELEASE_DATE.year if song_obj.RELEASE_DATE else None,
-        album=album_model,
-        genre=genre_model,
-        artist=artists_model
+        album=album_name,
+        genre=genre_name,
+        artist=artists,
+        file_id=song_obj.file.FILE_ID
     )
 
 

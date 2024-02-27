@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field
-from typing import Optional, List
+from typing import Optional, List, Union
 
 
 class FileBase(BaseModel):
@@ -62,7 +62,7 @@ class SimpleSong(BaseModel):
     song_id: int
     title: Optional[str] = None
     duration: Optional[float] = None
-    release_date: Optional[str] = None
+    release_date: Optional[int] = Field(None, description='Date is only provided as year')
 
     class Config:
         from_attributes = True
@@ -73,8 +73,8 @@ class SongBase(BaseModel):
     genre_id: int
     file_id: int
     duration: Optional[int] = None
-    title: str
-    release_date: Optional[str] = None
+    title: Optional[str] = None
+    release_date: Optional[int] = Field(None, description='Date is only provided as year')
 
 
 
@@ -97,7 +97,7 @@ class SongArtist(SongArtistBase):
 class SongWithRelations(Song):
     album: Optional[Album] = None
     genre: Optional[Genre] = None
-    artists: List[Artist] = []
+    artists: Optional[List[Artist]] = None
     class Config:
         from_attributes = True
 

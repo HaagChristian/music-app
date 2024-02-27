@@ -1,3 +1,4 @@
+import base64
 from typing import List
 
 from src.api.myapi.metadata_model import MetadataFromSearch, Artist, MetadataToChangeRequest, MetadataId3Input
@@ -59,7 +60,7 @@ def map_genre_to_model(genre_obj):
 def map_file_to_model(file_obj):
     return File(
         file_id=file_obj.FILE_ID,
-        file_data=file_obj.FILE_DATA,
+        file_data=base64.b64encode(file_obj.FILE_DATA).decode('utf-8') if file_obj else None,
         file_type=file_obj.FILE_TYPE,
         file_name=file_obj.FILE_NAME
         ) if file_obj else None
@@ -76,7 +77,7 @@ def map_simple_song_to_model(song_obj):
         song_id=song_obj.SONG_ID,
         title=song_obj.TITLE,
         duration=song_obj.DURATION,
-        release_date=str(song_obj.RELEASE_DATE) if song_obj.RELEASE_DATE else None
+        release_date=song_obj.RELEASE_DATE.year if song_obj.RELEASE_DATE else None
     ) if song_obj else None
 
 
@@ -92,16 +93,19 @@ def map_song_with_rel_to_model(song_obj):
         genre_name=song_obj.genre.GENRE_NAME
     ) if song_obj.genre else None
 
-    artists_model = [Artist(
-        artist_id=artist.ARTIST_ID,
-        artist_name=artist.ARTIST_NAME
-    ) for artist in song_obj.artist]
+    artists_model = []
+    for song_artist in song_obj.artist:
+        artist = song_artist.artist
+        artists_model.append(Artist(
+            artist_id=artist.ARTIST_ID,
+            artist_name=artist.ARTIST_NAME
+        ))
 
     return SongWithRelations(
         song_id=song_obj.SONG_ID,
         title=song_obj.TITLE,
         duration=song_obj.DURATION,
-        release_date=str(song_obj.RELEASE_DATE) if song_obj.RELEASE_DATE else None,
+        release_date=song_obj.RELEASE_DATE.year if song_obj.RELEASE_DATE else None,
         album=album_model,
         genre=genre_model,
         artist=artists_model
@@ -113,7 +117,7 @@ def map_song_with_rel_and_file_to_model(song_obj):
 
     file_model = File(
         file_id=song_obj.file.FILE_ID,
-        file_data=song_obj.file.FILE_DATA,
+        file_data=base64.b64encode(song_obj.file.FILE_DATA).decode('utf-8') if song_obj.file else None,
         file_type=song_obj.file.FILE_TYPE,
         file_name=song_obj.file.FILE_NAME
     ) if song_obj.file else None

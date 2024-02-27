@@ -16,5 +16,5 @@ def check_input_file(file: UploadFile):
     file.file.seek(0)
     mime_type = magic.from_buffer(file_content_buffer, mime=True)
 
-    if file.content_type not in accepted_mime_types or mime_type not in accepted_mime_types:
+    if file.content_type not in accepted_mime_types and mime_type not in accepted_mime_types:
         raise WrongFileType(WRONG_MME_TYPE)

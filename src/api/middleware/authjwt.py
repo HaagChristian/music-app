@@ -41,7 +41,7 @@ class AuthJwt:
                 user_email = self._decoded_jwt["sub"]
                 new_token = self.encode_token(user_email)
                 return new_token
-        except(jwt.ExpiredSignatureError, jwt.InvalidTokenError):
+        except(jwt.ExpiredSignatureError, jwt.InvalidTokenError, Unauthorized):
             raise NoResultFound(DB_NO_RESULT_FOUND)
 
     @property

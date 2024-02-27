@@ -3,7 +3,7 @@ from typing import Optional, List, Union
 
 from pydantic import BaseModel, Field, model_validator, field_validator
 
-from src.settings.error_messages import MISSING_PARAMETER, INVALID_YEAR, IMPOSSIBLE_YEAR
+from src.settings.error_messages import MISSING_PARAMETER, INVALID_YEAR
 
 
 class Artist(BaseModel):
@@ -24,7 +24,7 @@ class DBMetadata(BaseModel):
             try:
                 year = int(value)
                 if year < 1000 or year > datetime.now().year:
-                    raise ValueError(IMPOSSIBLE_YEAR)
+                    raise ValueError
                 return year
             except ValueError:
                 raise ValueError(INVALID_YEAR)
@@ -59,7 +59,7 @@ class MetadataToChangeRequest(BaseModel):
         try:
             year = int(value)
             if year < 1000 or year > datetime.now().year:
-                raise ValueError(IMPOSSIBLE_YEAR)
+                raise ValueError
             return year
         except ValueError:
             raise ValueError(INVALID_YEAR)
@@ -94,7 +94,7 @@ class MetadataResponse(BaseModel):
             try:
                 year = int(value)
                 if year < 1000 or year > datetime.now().year:
-                    raise ValueError(IMPOSSIBLE_YEAR)
+                    raise ValueError
                 return year
             except ValueError:
                 raise ValueError(INVALID_YEAR)

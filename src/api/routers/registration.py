@@ -8,6 +8,7 @@ from starlette.requests import Request
 
 from src.api.middleware.auth import AuthProvider
 from src.api.middleware.authjwt import AuthJwt
+from src.api.middleware.custom_exceptions.unauthorized import Unauthorized
 from src.api.middleware.custom_exceptions.user_already_exist import UserAlreadyExistException
 from src.api.middleware.exceptions import exception_mapping
 from src.api.myapi.registration_model import UserAuthResponseModel, SignUpRequestModel, SignInRequestModel, \
@@ -69,7 +70,7 @@ def new_token_from_refresh_token(token: Annotated[HTTPAuthorizationCredentials, 
         refresh_token = AuthJwt.encode_refresh_token(user_email=auth.get_token_data_from_decoded_token)
 
         return UserAuthResponseModel(token=TokenModel(access_token=access_token, refresh_token=refresh_token))
-    except NoResultFound as e:
+    except (NoResultFound, Unauthorized) as e:
         http_status, detail_function = exception_mapping.get(type(e), (
             status.HTTP_500_INTERNAL_SERVER_ERROR, lambda e: str(e.args[0])))
         raise HTTPException(status_code=http_status, detail=detail_function(e))

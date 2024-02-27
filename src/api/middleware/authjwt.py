@@ -3,10 +3,9 @@ from datetime import datetime, timedelta
 import jwt
 from fastapi.security import HTTPAuthorizationCredentials
 from jwt import ExpiredSignatureError, DecodeError
-from sqlalchemy.exc import NoResultFound
 
 from src.api.middleware.custom_exceptions.unauthorized import Unauthorized
-from src.settings.error_messages import DB_NO_RESULT_FOUND, JWT_INVALID_TOKEN
+from src.settings.error_messages import JWT_INVALID_TOKEN
 from src.settings.settings import TIMEZONE, TOKEN_EXPIRE_MINS, SECRET_KEY, ALGORITHM, REFRESH_TOKEN_EXPIRE_HOURS
 
 
@@ -42,7 +41,7 @@ class AuthJwt:
                 new_token = self.encode_token(user_email)
                 return new_token
         except(jwt.ExpiredSignatureError, jwt.InvalidTokenError, Unauthorized):
-            raise NoResultFound(DB_NO_RESULT_FOUND)
+            raise Unauthorized(JWT_INVALID_TOKEN)
 
     @property
     def get_token_data_from_decoded_token(self) -> str:

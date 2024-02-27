@@ -6,7 +6,7 @@ from src.database.musicDB.db import get_db_music
 from src.api.myapi.music_db_models import Song, File, SongWithRelationsAndFile, SimpleSong, SongWithRelations
 from src.database.musicDB.db_crud import get_song_by_id, get_file_by_id, get_file_by_song_id, \
     get_song_and_file_by_song_id, get_simple_song_by_id
-from src.service.mapping.map_db_data import map_file_to_model, map_song_to_model, map_song_with_rel_and_file_to_model, map_song_with_rel_to_model
+from src.service.mapping.map_db_data import map_file_to_model, map_simple_song_to_model, map_song_with_rel_and_file_to_model, map_song_with_rel_to_model
 from src.settings.error_messages import DB_NO_RESULT_FOUND
 
 
@@ -51,7 +51,7 @@ def get_simple_song(song_id: int, db: Session = Depends(get_db_music)):
     song_obj = get_simple_song_by_id(db, song_id)
     if not song_obj:
         raise NoResultFound(DB_NO_RESULT_FOUND)
-    simple_song: SimpleSong = map_song_to_model(song_obj)
+    simple_song: SimpleSong = map_simple_song_to_model(song_obj)
     return simple_song
 
 

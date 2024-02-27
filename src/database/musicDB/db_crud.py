@@ -91,8 +91,19 @@ def get_file_by_id(db: Session, file_id: int):
     return file
 
 
-def get_song_by_id(db: Session, song_id: int):
+def get_simple_song_by_id(db: Session, song_id: int):
     song = db.query(Song).filter(Song.SONG_ID == song_id).first()
+    print(song)
+    return song
+
+
+def get_song_by_id(db: Session, song_id: int):
+    song = db.query(Song).filter(Song.SONG_ID == song_id).\
+            options(
+        joinedload(Song.album),
+        joinedload(Song.genre),
+        joinedload(Song.artist)
+            ).first()
     print(song)
     return song
 

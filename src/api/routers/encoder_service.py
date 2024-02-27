@@ -33,8 +33,9 @@ def convert_file(request: Request, file_id: int, target_format: str, db: Session
 
     src_format = file.FILE_TYPE
 
-    data = f"{{'src_format': '{src_format}', 'target_format': '{target_format}'}}"
+    #data = f"{{'src_format': '{src_format}', 'target_format': '{target_format}'}}"
     #data = {'src_format': src_format, 'target_format': target_format}
+    data = {'input_model': f'{{"src_format": "{src_format}", "target_format": "{target_format}"}}'}
 
     res = requests.post(f"http://{REQUEST_TO_ENCODER_SERVICE}:8002/api/encoder/convert",
                         files={'file:': file.FILE_DATA}, data=data)

@@ -72,7 +72,7 @@ class SongBase(BaseModel):
     #album_id: int
     #genre_id: int
     file_id: int
-    duration: Optional[int] = None
+    duration: Optional[float] = None
     title: Optional[str] = None
     release_date: Optional[int] = Field(None, description='Date is only provided as year')
 
@@ -95,8 +95,8 @@ class SongArtist(SongArtistBase):
 
 
 class SongWithRelations(Song):
-    album: Optional[Album] = None
-    genre: Optional[Genre] = None
+    album: Optional[str] = None
+    genre: Optional[str] = None
     artists: Optional[List[Artist]] = None
     class Config:
         from_attributes = True

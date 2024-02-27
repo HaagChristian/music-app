@@ -72,14 +72,14 @@ def search_songs_combined(db: Session, title: str = None, genre_name: str = None
     if genre_name:
         query = query.join(Song.genre).filter(Genre.GENRE_NAME.like(f'%{genre_name}%'))
     if artist_name:
-        query = query.join(Song.artists).join(Artist).filter(Artist.ARTIST_NAME.like(f'%{artist_name}%'))
+        query = query.join(Song.artist).join(Artist).filter(Artist.ARTIST_NAME.like(f'%{artist_name}%'))
     if album_name:
         query = query.join(Song.album).filter(Album.ALBUM_NAME.like(f'%{album_name}%'))
 
     return query.options(
             joinedload(Song.album),
             joinedload(Song.genre),
-            joinedload(Song.artists)
+            joinedload(Song.artist)
         ).all()
 
 

@@ -15,10 +15,10 @@ def map_data_from_request_call(res) -> MetadataResponse:
     if res_from_request.get('title', None) is None:
         raise MissingTitleFromMetadataError(MISSING_TITLE_FROM_METADATA)
 
-    list_of_artists = res_from_request.get('artists', [])
-    artists_objects = [Artist(name=artist) for artist in list_of_artists]
-
-    res_from_request['artists'] = artists_objects
+    list_of_artists = res_from_request.get('artists', None)
+    if list_of_artists:
+        artists_objects = [Artist(name=artist) for artist in list_of_artists]
+        res_from_request['artists'] = artists_objects
 
     return MetadataResponse(**res_from_request)
 

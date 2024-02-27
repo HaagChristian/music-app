@@ -38,7 +38,8 @@ def add_file_and_metadata(db: Session, file, metadata: MetadataResponse, file_na
                 db.add(artist)
                 db.flush()
             song_artist = SongArtist(song=song, artist=artist)
-            song.artist.append(song_artist)
+            db.add(song_artist)
+            db.flush()
 
     db.add(song)
     db.flush()

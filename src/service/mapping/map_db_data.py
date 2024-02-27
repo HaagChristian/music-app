@@ -1,8 +1,7 @@
 from typing import List
 
 from src.api.myapi.metadata_model import MetadataFromSearch, Artist, MetadataToChangeRequest, MetadataId3Input
-from src.api.myapi.music_db_models import FileDetailModel, SongWithRelationsAndFile, Album, Genre, File, \
-    SongWithRelations
+from src.api.myapi.music_db_models import SongWithRelationsAndFile, Album, Genre, File, SongWithRelations, SimpleSong
 from src.database.musicDB.db_models import Song
 
 
@@ -43,37 +42,45 @@ def input_mapping_from_change_metadata(metadata_to_change: MetadataToChangeReque
     return MetadataId3Input(genre=metadata_to_change.genre, album=metadata_to_change.album,
                             title=metadata_to_change.title, artists=artist_str, date=metadata_to_change.date)
 
+def map_album_to_model(album_obj):
+    if album_obj:
+        return Album(
+            album_id=album_obj.ALBUM_ID,
+            album_name=album_obj.ALBUM_NAME
+        )
+    return None
 
-def file_obj_to_model(file_obj):
-    """Converts SQLAlchemy file object to FileDetailModel."""
-    song = file_obj.song
-    album = song.album if song.album else None
-    genre = song.genre if song.genre else None
-    artist = [Artist(artist_id=artist.ARTIST_ID, artist_name=artist.ARTIST_NAME) for artist in song.artist]
+def map_genre_to_model(genre_obj):
+    return Genre(
+        genre_id=genre_obj.GENRE_ID,
+        genre_name=genre_obj.GENRE_NAME
+    ) if genre_obj else None
 
-    song_model = SongWithRelations(
-        song_id=song.SONG_ID,
-        song_title=song.TITLE,
-        duration=song.DURATION,
-        file_path=file_obj.FILE_NAME,
-        bit_rate=song.BIT_RATE,
-        sample_rate=song.SAMPLE_RATE,
-        release_date=song.RELEASE_DATE.strftime("%Y-%m-%d") if song.RELEASE_DATE else None,
-        album=Album(album_id=album.ALBUM_ID, album_name=album.ALBUM_NAME) if album else None,
-        genre=Genre(genre_id=genre.GENRE_ID, genre_name=genre.GENRE_NAME) if genre else None,
-        artist=artist
-    )
-
-    file_model = File(
+def map_file_to_model(file_obj):
+    return File(
         file_id=file_obj.FILE_ID,
+        file_data=file_obj.FILE_DATA,
         file_type=file_obj.FILE_TYPE,
         file_name=file_obj.FILE_NAME
-    )
+        ) if file_obj else None
 
-    return FileDetailModel(song=song_model, **file_model.dict())
+def map_artist_to_model(artist_obj):
+    return Artist(
+        artist_id=artist_obj.ARTIST_ID,
+        artist_name=artist_obj.ARTIST_NAME
+    ) if artist_obj else None
 
 
-def song_obj_to_model(song_obj):
+def map_simple_song_to_model(song_obj):
+    return SimpleSong(
+        song_id=song_obj.SONG_ID,
+        title=song_obj.TITLE,
+        duration=song_obj.DURATION,
+        release_date=str(song_obj.RELEASE_DATE) if song_obj.RELEASE_DATE else None
+    ) if song_obj else None
+
+
+def map_song_with_rel_to_model(song_obj):
     """Converts SQLAlchemy song object to SongWithRelations model."""
     album_model = Album(
         album_id=song_obj.album.ALBUM_ID,
@@ -94,33 +101,23 @@ def song_obj_to_model(song_obj):
         song_id=song_obj.SONG_ID,
         title=song_obj.TITLE,
         duration=song_obj.DURATION,
-        release_date=song_obj.RELEASE_DATE.strftime("%Y-%m-%d") if song_obj.RELEASE_DATE else None,
+        release_date=str(song_obj.RELEASE_DATE) if song_obj.RELEASE_DATE else None,
         album=album_model,
         genre=genre_model,
         artist=artists_model
     )
 
 
-def song_and_file_obj_to_model(song_obj):
+def map_song_with_rel_and_file_to_model(song_obj):
     """Converts SQLAlchemy song object to SongWithRelationsAndFile."""
-    album = song_obj.album if song_obj.album else None
-    genre = song_obj.genre if song_obj.genre else None
-    artist = [Artist(artist_id=artist.ARTIST_ID, artist_name=artist.ARTIST_NAME) for artist in song_obj.artist]
-    file_obj = song_obj.file if song_obj.file else None
 
     file_model = File(
-        file_id=file_obj.FILE_ID,
-        file_type=file_obj.FILE_TYPE,
-        file_name=file_obj.FILE_NAME
-    ) if file_obj else None
+        file_id=song_obj.file.FILE_ID,
+        file_data=song_obj.file.FILE_DATA,
+        file_type=song_obj.file.FILE_TYPE,
+        file_name=song_obj.file.FILE_NAME
+    ) if song_obj.file else None
 
-    return SongWithRelationsAndFile(
-        song_id=song_obj.SONG_ID,
-        song_title=song_obj.TITLE,
-        duration=song_obj.DURATION,
-        release_date=song_obj.RELEASE_DATE.strftime("%Y-%m-%d") if song_obj.RELEASE_DATE else None,
-        album=Album(album_id=album.ALBUM_ID, album_name=album.ALBUM_NAME) if album else None,
-        genre=Genre(genre_id=genre.GENRE_ID, genre_name=genre.GENRE_NAME) if genre else None,
-        artist=artist,
-        file=file_model
-    )
+    song_with_rel = map_song_with_rel_to_model(song_obj)
+    return SongWithRelationsAndFile(**song_with_rel.dict(), file=file_model)
+

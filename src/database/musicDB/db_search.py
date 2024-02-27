@@ -39,28 +39,29 @@ def search_songs_by_album(db: Session, album_name: str):
 
 
 def fetch_all_search_criteria(db: Session):
+    criteria_dict = {}
 
     titles = db.query(Song.TITLE).distinct().all()
     titles_list = [title[0] for title in titles]
+    if titles_list:
+        criteria_dict["title"] = titles_list
 
     artists = db.query(Artist.ARTIST_NAME).distinct().all()
     artists_list = [artist[0] for artist in artists]
+    if artists_list:
+        criteria_dict["interpret"] = artists_list
 
     albums = db.query(Album.ALBUM_NAME).distinct().all()
     albums_list = [album[0] for album in albums]
+    if albums_list:
+        criteria_dict["album"] = albums_list
 
     genres = db.query(Genre.GENRE_NAME).distinct().all()
     genres_list = [genre[0] for genre in genres]
-
-    criteria_dict = {
-        "title": titles_list,
-        "interpret": artists_list,
-        "album": albums_list,
-        "genre": genres_list
-    }
+    if genres_list:
+        criteria_dict["genre"] = genres_list
 
     return criteria_dict
-
 
 def search_songs_combined(db: Session, title: str = None, genre_name: str = None, artist_name: str = None,
                           album_name: str = None):

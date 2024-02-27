@@ -37,11 +37,11 @@ def upload_file(response: Response, request: Request,
                 db=Depends(get_db_music)):
     """
         Upload a file and get the metadata from it
-
         :param response: Response
         :param request: Request required for the middleware and commit_with_rollback_backup
         :param file: UploadFile
         :param db: Session
+
         :return: MetadataResponse
     """
     try:
@@ -103,7 +103,7 @@ def change_metadata(request: Request, metadata_to_change: MetadataToChangeReques
 
         metadata_db = DBMetadata(artists=metadata_to_change.artists, title=mapped_input_data.title,
                                  album=mapped_input_data.album, genre=mapped_input_data.genre,
-                                 song_id=metadata_to_change.song_id, date=mapped_input_data.date)
+                                 song_id=metadata_to_change.song_id, date=metadata_to_change.date)
 
         file_helper_with_temp_file(db=db, res=res, metadata_db=metadata_db, filename=db_res.FILE_NAME)
 

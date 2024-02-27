@@ -31,3 +31,7 @@ MISSING_TITLE_FROM_METADATA: str = "Title is missing in the metadata. " \
                                    "Please make sure that at least a title is included in the metadata"
 
 SONG_ALREADY_IN_DB: str = "Song already exists in the database"
+
+INVALID_YEAR: str = "Invalid year. Please provide a valid year in the metadata"
+
+IMPOSSIBLE_YEAR: str = "Year is not possible. Please provide a valid year in the metadata"

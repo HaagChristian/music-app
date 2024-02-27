@@ -39,10 +39,9 @@ def input_mapping_from_change_metadata(metadata_to_change: MetadataToChangeReque
         artist_str = ';'.join(artist_names)
     else:
         artist_str = None
-    date_string = metadata_to_change.date.strftime("%Y-%m-%d") if metadata_to_change.date else None
 
     return MetadataId3Input(genre=metadata_to_change.genre, album=metadata_to_change.album,
-                            title=metadata_to_change.title, artists=artist_str, date=date_string)
+                            title=metadata_to_change.title, artists=artist_str, date=metadata_to_change.date)
 
 
 def file_obj_to_model(file_obj):

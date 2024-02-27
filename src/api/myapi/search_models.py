@@ -1,5 +1,7 @@
-from pydantic import BaseModel, model_validator
 from typing import Optional, Any
+
+from pydantic import BaseModel, model_validator
+
 from src.settings.error_messages import MISSING_SEARCH_CRITERIA
 
 
@@ -12,6 +14,9 @@ class SearchCriteria(BaseModel):
     @model_validator(mode='before')
     @classmethod
     def check_at_least_one_field(cls, data: Any) -> Any:
+        if set(self.dict().values()) == {None}:  # or {''} # if all fields are None
+            raise ValueError(MISSING_SEARCH_CRITERIA)
+
         if isinstance(data, dict):
             fields = ['title', 'genre_name', 'artist_name', 'album_name']
             if not any(data.get(field) for field in fields):

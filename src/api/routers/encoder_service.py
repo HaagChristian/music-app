@@ -1,6 +1,5 @@
-import io
 import requests
-from fastapi import APIRouter, HTTPException, Depends, UploadFile, Request
+from fastapi import APIRouter, HTTPException, Depends, Request
 from fastapi.security import HTTPBearer
 from sqlalchemy.exc import NoResultFound
 
@@ -33,18 +32,18 @@ def convert_file(request: Request, file_id: int, target_format: str, db: Session
         raise NoResultFound(DB_NO_RESULT_FOUND)
 
     src_format = file.FILE_TYPE
-    file_content = io.BytesIO(file.FILE_DATA)
-    print(f"file_content:{file_content}")
+    #file_content = io.BytesIO(file.FILE_DATA)
+    #print(f"file_content:{file_content}")
     #upload_file = UploadFile(filename=file.FILE_NAME, file=file_content)
     #print(upload_file)
     #files = {'file': ('file', upload_file, 'multipart/form-data')}
     #print(f"files:{files}")
-    files = {'file': (file.FILE_NAME, file_content, 'audio/mpeg')}
+    #files = {'file': file_content}
 
-    data = {'src_format': src_format, 'target_format': target_format}
-    print(f"data: {data}")
+    data = f"{{'src_format': '{src_format}', 'target_format': '{target_format}'}}"
 
-    res = requests.post(f"http://{REQUEST_TO_ENCODER_SERVICE}:8002/api/encoder/convert", files=files, data=data)
+    res = requests.post(f"http://{REQUEST_TO_ENCODER_SERVICE}:8002/api/encoder/convert",
+                        files={'file:': file.FILE_DATA}, data=data)
     if res.status_code != 200:
         raise HTTPException(status_code=res.status_code, detail=FILE_CONVERSION_ERROR)
 

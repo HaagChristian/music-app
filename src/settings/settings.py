@@ -49,7 +49,3 @@ TOKEN_EXPIRE_MINS = int(load_env_with_default('TOKEN_EXPIRE_MINS', 30))
 REFRESH_TOKEN_EXPIRE_HOURS = int(load_env_with_default('REFRESH_TOKEN_EXPIRE_HOURS', 10))
 TIMEZONE = load_env_with_default('TIMEZONE', pytz.timezone('CET'))
 SECRET_KEY = load_env_with_default('SECRET_KEY', 'key not set')
-
-# if SECRET_KEY == 'key not set':
-#     raise JWTKeyNotSet()
-#     # If Private Key for JWT is not set, crash the complete service because it's a major security risk

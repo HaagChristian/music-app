@@ -37,6 +37,8 @@ def upload_file(response: Response, request: Request,
                 db=Depends(get_db_music)):
     """
         Upload a file and get the metadata from it
+
+        \f
         :param response: Response
         :param request: Request required for the middleware and commit_with_rollback_backup
         :param file: UploadFile

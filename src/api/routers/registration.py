@@ -31,6 +31,7 @@ def signup(request: Request, user: SignUpRequestModel, response: Response, db=De
     """
         API call to register a new user/account
 
+        \f
         :param request: Request is used for the decorator commit_on_signup
         :param user: SignUpRequestModel contains the user details
         :param response: Response is used for the decorator commit_on_signup

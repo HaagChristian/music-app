@@ -13,7 +13,7 @@ class Address(Base):
     POSTAL_CODE: Mapped[int] = mapped_column(nullable=False)
     CITY: Mapped[str] = mapped_column(nullable=False)
     COUNTRY: Mapped[str] = mapped_column(nullable=False)
-    STATE: Mapped[str] = mapped_column(nullable=False)
+    STATE: Mapped[str] = mapped_column()
     USER_ID: Mapped[int] = mapped_column(ForeignKey('user.ID'), nullable=False)
 
     user: Mapped["User"] = relationship(back_populates="address", lazy=True)  # specify lazy loading

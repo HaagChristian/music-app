@@ -1,3 +1,5 @@
+from typing import Optional
+
 from pydantic import BaseModel, EmailStr, field_validator
 
 
@@ -7,7 +9,7 @@ class Address(BaseModel):
     postal_code: int
     city: str
     country: str
-    state: str
+    state: Optional[str] = None
 
 
 class TokenModel(BaseModel):

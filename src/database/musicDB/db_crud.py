@@ -92,16 +92,22 @@ def get_song_and_file_by_song_id(db: Session, song_id: int):
         joinedload(Song.genre),
         joinedload(Song.artist)
     ).first()
+    if not song_obj:
+        raise NoResultFound(DB_NO_RESULT_FOUND)
     return song_obj
 
 
 def get_file_by_id(db: Session, file_id: int):
     file = db.query(File).filter(File.FILE_ID == file_id).first()
+    if not file:
+        raise NoResultFound(DB_NO_RESULT_FOUND)
     return file
 
 
 def get_simple_song_by_id(db: Session, song_id: int):
     song = db.query(Song).filter(Song.SONG_ID == song_id).first()
+    if not song:
+        raise NoResultFound(DB_NO_RESULT_FOUND)
     return song
 
 
@@ -112,6 +118,8 @@ def get_song_by_id(db: Session, song_id: int):
         joinedload(Song.genre),
         joinedload(Song.artist)
             ).first()
+    if not song:
+        raise NoResultFound(DB_NO_RESULT_FOUND)
     return song
 
 

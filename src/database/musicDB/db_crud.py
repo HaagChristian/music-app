@@ -1,11 +1,18 @@
 """This module contains the CRUD operations for the database."""
+import tempfile
 
+from fastapi import HTTPException, status
 from sqlalchemy import and_
 from sqlalchemy.orm import Session, joinedload
+from starlette.background import BackgroundTask
+from starlette.responses import FileResponse
+
+from src.api.middleware.cleanup import cleanup
 
 from src.api.myapi.metadata_model import MetadataResponse, DBMetadata
 from src.api.myapi.music_db_models import ConversionResponse
 from src.database.musicDB.db_models import Album, File, Genre, Song, Artist, SongArtist, ConvertedFile
+from src.settings.error_messages import CONVERTED_FILE_ALREADY_EXISTS_IN_DB
 
 
 def add_file_and_metadata(db: Session, file, metadata: MetadataResponse, file_name: str):
@@ -48,26 +55,29 @@ def add_file_and_metadata(db: Session, file, metadata: MetadataResponse, file_na
 def get_song_by_title(db: Session, metadata: MetadataResponse):
     return db.query(Song).filter(Song.TITLE == metadata.title).first()
 
-def handle_conversion_response(response: ConversionResponse, original_file_id: int, db: Session) -> ConvertedFile:
+
+def is_converted_file_already_in_db(db: Session, file_name: str, file_type: str):
+    return db.query(ConvertedFile).filter(and_(ConvertedFile.FILE_NAME == file_name, ConvertedFile.FILE_TYPE == file_type)).first()
+
+
+def handle_conversion_response(response: ConversionResponse, original_file_id: int, file_name: str, db: Session):
     converted_file = ConvertedFile(
         ORIGINAL_FILE_ID=original_file_id,
         FILE_TYPE=response.file_type,
-        FILE_DATA=response.file_data
+        FILE_DATA=response.file_data,
+        FILE_NAME=file_name
     )
-    db.add(converted_file)
-    db.flush()
-    return converted_file
+    is_converted_file_already_in_db(db, file_name, converted_file.FILE_TYPE)
+    if is_converted_file_already_in_db:
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=CONVERTED_FILE_ALREADY_EXISTS_IN_DB)
+    else:
+        db.add(converted_file)
+        db.flush()
+        with tempfile.NamedTemporaryFile(delete=False) as temp_file:
+            temp_file_path = temp_file.name
+            temp_file.write(converted_file.FILE_DATA)
+            return FileResponse(temp_file_path, background=BackgroundTask(cleanup, temp_file_path=temp_file_path, temp_file=temp_file))
 
-
-def add_converted_file(db: Session, original_file_id: int, file_data: bytes, file_type: str) -> ConvertedFile:
-    converted_file = ConvertedFile(
-        ORIGINAL_FILE_ID=original_file_id,
-        FILE_DATA=file_data,
-        FILE_TYPE=file_type
-    )
-    db.add(converted_file)
-    db.flush()
-    return converted_file
 
 
 def get_file_by_song_id(db: Session, song_id: int):
@@ -82,19 +92,16 @@ def get_song_and_file_by_song_id(db: Session, song_id: int):
         joinedload(Song.genre),
         joinedload(Song.artist)
     ).first()
-    print(song_obj)
     return song_obj
 
 
 def get_file_by_id(db: Session, file_id: int):
     file = db.query(File).filter(File.FILE_ID == file_id).first()
-    print(file)
     return file
 
 
 def get_simple_song_by_id(db: Session, song_id: int):
     song = db.query(Song).filter(Song.SONG_ID == song_id).first()
-    print(song)
     return song
 
 
@@ -105,7 +112,6 @@ def get_song_by_id(db: Session, song_id: int):
         joinedload(Song.genre),
         joinedload(Song.artist)
             ).first()
-    print(song)
     return song
 
 
@@ -177,21 +183,18 @@ def if_artist_not_in_db_add_to_db(db: Session, artist_name: str, song_id: int):
     db.flush()
 
 
-"""Delete a song and its file from the database by song id."""
-
-
-def delete_song_and_file_by_id(db: Session, song_id: int):
+def delete_song_and_file_by_song_id(db: Session, song_id: int):
+    """
+    Delete a song and its file from the database by song id.
+    """
     song = db.query(Song).filter(Song.SONG_ID == song_id).first()
     if not song:
         return False
 
     file_id = song.FILE_ID
-
     if file_id:
         db.query(File).filter(File.FILE_ID == file_id).delete()
-
     db.query(Song).filter(Song.SONG_ID == song_id).delete()
 
     db.commit()
-
     return True

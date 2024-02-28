@@ -27,7 +27,7 @@ def get_all_search_criteria(db: Session = Depends(get_db_music)):
     return criteria_dict
 
 
-@router.post("/search/combined", response_model=List[SongWithRelations])
+@router.post("/search/combined", response_model=List[SongWithRelations], response_model_exclude_none=True)
 def search_combined(criteria: SearchCriteria, db: Session = Depends(get_db_music)):
     songs = search_songs_combined(db, criteria.title, criteria.genre_name, criteria.artist_name, criteria.album_name)
     songs_with_rel: List[SongWithRelations] = [map_song_with_rel_to_model(song) for song in songs]

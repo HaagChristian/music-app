@@ -20,7 +20,7 @@ router = APIRouter(
     dependencies=[Depends(http_bearer)]
 )
 
-@router.post("/convertfile/{file_id}", response_model=ConvertedFile)
+@router.post("/convertfile/{file_id}")
 @commit_with_rollback_backup
 def convert_file(request: Request, file_id: int, target_format: str, db: Session = Depends(get_db_music)):
     if target_format not in ["wav", "flac", "ogg"]:

@@ -3,6 +3,7 @@ import tempfile
 
 from fastapi import HTTPException, status
 from sqlalchemy import and_
+from sqlalchemy.exc import NoResultFound
 from sqlalchemy.orm import Session, joinedload
 from starlette.background import BackgroundTask
 from starlette.responses import FileResponse
@@ -12,7 +13,7 @@ from src.api.middleware.cleanup import cleanup
 from src.api.myapi.metadata_model import MetadataResponse, DBMetadata
 from src.api.myapi.music_db_models import ConversionResponse
 from src.database.musicDB.db_models import Album, File, Genre, Song, Artist, SongArtist, ConvertedFile
-from src.settings.error_messages import CONVERTED_FILE_ALREADY_EXISTS_IN_DB
+from src.settings.error_messages import CONVERTED_FILE_ALREADY_EXISTS_IN_DB, DB_NO_RESULT_FOUND
 
 
 def add_file_and_metadata(db: Session, file, metadata: MetadataResponse, file_name: str):
@@ -61,16 +62,15 @@ def is_converted_file_already_in_db(db: Session, file_name: str, file_type: str)
 
 
 def handle_conversion_response(response: ConversionResponse, original_file_id: int, file_name: str, db: Session):
-    converted_file = ConvertedFile(
-        ORIGINAL_FILE_ID=original_file_id,
-        FILE_TYPE=response.file_type,
-        FILE_DATA=response.file_data,
-        FILE_NAME=file_name
-    )
-    is_converted_file_already_in_db(db, file_name, converted_file.FILE_TYPE)
-    if is_converted_file_already_in_db:
+    if is_converted_file_already_in_db(db, file_name, response.file_type):
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=CONVERTED_FILE_ALREADY_EXISTS_IN_DB)
     else:
+        converted_file = ConvertedFile(
+            ORIGINAL_FILE_ID=original_file_id,
+            FILE_TYPE=response.file_type,
+            FILE_DATA=response.file_data,
+            FILE_NAME=file_name
+        )
         db.add(converted_file)
         db.flush()
         with tempfile.NamedTemporaryFile(delete=False) as temp_file:
@@ -185,16 +185,31 @@ def if_artist_not_in_db_add_to_db(db: Session, artist_name: str, song_id: int):
 
 def delete_song_and_file_by_song_id(db: Session, song_id: int):
     """
-    Delete a song and its file from the database by song id.
+    delete a song with file
     """
+
+    # get file_id
     song = db.query(Song).filter(Song.SONG_ID == song_id).first()
     if not song:
-        return False
+        raise NoResultFound(DB_NO_RESULT_FOUND)
 
     file_id = song.FILE_ID
-    if file_id:
-        db.query(File).filter(File.FILE_ID == file_id).delete()
-    db.query(Song).filter(Song.SONG_ID == song_id).delete()
+
+    # delete referencing entries in `converted_file`
+    db.query(ConvertedFile).filter(ConvertedFile.ORIGINAL_FILE_ID == file_id).delete(synchronize_session='fetch')
+
+    # delete referencing entries in `song_artist`
+    db.query(SongArtist).filter(SongArtist.SONG_ID == song_id).delete(synchronize_session='fetch')
+
+    # delete song
+    db.query(Song).filter(Song.SONG_ID == song_id).delete(synchronize_session='fetch')
+
+    # delete file
+    if db.query(Song).filter(Song.FILE_ID == file_id).count() == 0:
+        db.query(File).filter(File.FILE_ID == file_id).delete(synchronize_session='fetch')
 
     db.commit()
     return True
+
+
+

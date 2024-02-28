@@ -38,7 +38,7 @@ class MetadataToChangeRequest(BaseModel):
     genre: Optional[str] = None
     album: Optional[str] = None
     title: Optional[str] = None
-    date: Optional[Union[int]] = Field(None, description='Date is only provided as year')
+    date: Optional[Union[int]] = Field(None, description='Date is only provided as year', example=2021)
     # Union is required because the date can be None
     song_id: int
 
@@ -82,7 +82,7 @@ class MetadataResponse(BaseModel):
     artists: Optional[List[Artist]] = None
     album: Optional[str] = None
     genre: Optional[str] = None
-    date: Optional[Union[int]] = Field(None, description='Date is only provided as year')
+    date: Optional[Union[int]] = Field(None, description='Date is only provided as year', example=2021)
     duration: Optional[float] = None
     failed_tags: Optional[List[str]] = Field(None,
                                              description='List of metadata keys which are not in the '

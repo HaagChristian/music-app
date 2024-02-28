@@ -30,7 +30,7 @@ class AuthUser(BaseModel):
 # Input models
 
 class SignInRequestModel(BaseModel):
-    email: str
+    email: EmailStr
     password: str
 
 

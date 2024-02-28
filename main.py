@@ -4,7 +4,6 @@ import uuid
 import uvicorn
 from fastapi import FastAPI
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
-from starlette.middleware.cors import CORSMiddleware
 from starlette.requests import Request
 from starlette.responses import JSONResponse
 
@@ -41,16 +40,6 @@ app.include_router(general_endpoints.router)
 app.include_router(search.router)
 app.include_router(encoder_service.router)
 app.include_router(crud.router)
-
-# CORS is required to run api simultaneously with website on local machine
-# Allow localhost:8000 and 127.0.0.1:8000 to access the api
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
 
 
 def auth_validate(request: Request):

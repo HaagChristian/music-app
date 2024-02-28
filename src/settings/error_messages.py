@@ -34,3 +34,5 @@ SONG_ALREADY_IN_DB: str = "Song already exists in the database"
 
 INVALID_YEAR: str = "Invalid year. Please provide a valid year in the metadata"
 
+
+CONVERTED_FILE_ALREADY_EXISTS_IN_DB: str = "The converted file with this target format already exists in the database"

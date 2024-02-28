@@ -18,6 +18,7 @@ class ConvertedFileBase(BaseModel):
     original_file_id: int
     file_data: bytes
     file_type: str
+    file_name: str
 
 
 class ConvertedFile(ConvertedFileBase):
@@ -27,7 +28,7 @@ class ConvertedFile(ConvertedFileBase):
 
 class ConversionResponse(BaseModel):
     file_type: str
-    file_data: str
+    file_data: bytes
 
 class ArtistBase(BaseModel):
     artist_name: str
@@ -69,8 +70,6 @@ class SimpleSong(BaseModel):
 
 
 class SongBase(BaseModel):
-    #album_id: int
-    #genre_id: int
     file_id: int
     duration: Optional[float] = None
     title: Optional[str] = None

@@ -47,6 +47,7 @@ class ConvertedFile(Base):
     ORIGINAL_FILE_ID: Mapped[int] = mapped_column(Integer, ForeignKey('files.FILE_ID'), nullable=False, index=True)
     FILE_DATA: Mapped[LargeBinary] = mapped_column(LargeBinary)
     FILE_TYPE: Mapped[str] = mapped_column(Enum('wav', 'flac', 'ogg'))
+    FILE_NAME: Mapped[str] = mapped_column(String(100))
 
     file: Mapped['File'] = relationship(back_populates="converted_file")
 

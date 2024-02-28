@@ -4,6 +4,7 @@ import uuid
 import uvicorn
 from fastapi import FastAPI
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
+from starlette.middleware.cors import CORSMiddleware
 from starlette.requests import Request
 from starlette.responses import JSONResponse
 
@@ -41,6 +42,26 @@ app.include_router(search.router)
 app.include_router(encoder_service.router)
 app.include_router(crud.router)
 
+# CORS is required to run api simultaneously with website on local machine
+# Allow localhost:8000 and 127.0.0.1:8000 to access the api
+
+origins = [
+    "http://localhost",
+    "http://localhost:8000",
+    "http://127.0.0.1:8000",
+    "http://localhost:3000",
+    "http://localhost:4200"
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+    expose_headers=["*"],
+)
+
 
 def auth_validate(request: Request):
     if '/id3service' in request.url.path or 'user/me' in request.url.path or '/data/search' in request.url.path or \
@@ -69,10 +90,12 @@ def auth_validate(request: Request):
 @app.middleware("http")
 async def middleware_auth_check(request: Request, call_next):
     """ Middleware to check if the user has a valid jwt token to access the endpoints """
-    res = auth_validate(request)
+    # if request.scope.method is OPTIONS, the request is a preflight (CORS) request
+    if request.scope.get('method') != "OPTIONS":
+        res = auth_validate(request)
 
-    if res is not None:
-        return JSONResponse(status_code=401, content=res)
+        if res is not None:
+            return JSONResponse(status_code=401, content=res)
     response = await call_next(request)
     return response
 

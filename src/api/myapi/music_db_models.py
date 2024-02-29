@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field
-from typing import Optional, List, Union
+from typing import Optional, List
 
 
 class FileBase(BaseModel):
@@ -26,9 +26,11 @@ class ConvertedFile(ConvertedFileBase):
     class Config:
         from_attributes = True
 
+
 class ConversionResponse(BaseModel):
     file_type: str
     file_data: bytes
+
 
 class ArtistBase(BaseModel):
     artist_name: str
@@ -59,22 +61,12 @@ class Album(AlbumBase):
     class Config:
         from_attributes = True
 
-class SimpleSong(BaseModel):
-    song_id: int
-    title: Optional[str] = None
-    duration: Optional[float] = None
-    release_date: Optional[int] = Field(None, description='Date is only provided as year')
-
-    class Config:
-        from_attributes = True
-
 
 class SongBase(BaseModel):
     file_id: int
     duration: Optional[float] = None
     title: Optional[str] = None
     release_date: Optional[int] = Field(None, description='Date is only provided as year')
-
 
 
 class Song(SongBase):
@@ -96,10 +88,7 @@ class SongArtist(SongArtistBase):
 class SongWithRelations(Song):
     album: Optional[str] = None
     genre: Optional[str] = None
-    artists: Optional[List[Artist]] = None
+    artists: Optional[List[ArtistBase]] = None
     class Config:
         from_attributes = True
 
-
-class SongWithRelationsAndFile(SongWithRelations):
-    file: Optional[File] = None

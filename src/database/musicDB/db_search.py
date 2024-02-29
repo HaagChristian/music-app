@@ -1,7 +1,7 @@
 from sqlalchemy import and_
 from sqlalchemy.orm import Session, joinedload
 
-from src.database.musicDB.db_models import Song, Artist, Album, Genre
+from src.database.musicDB.db_models import Song, Artist, Album, Genre, SongArtist
 
 
 def fetch_all_search_criteria(db: Session):
@@ -39,7 +39,7 @@ def search_songs_combined(db: Session, title: str = None, genre_name: str = None
     if genre_name:
         query = query.join(Song.genre).filter(Genre.GENRE_NAME.like(f'%{genre_name}%'))
     if artist_name:
-        query = query.join(Song.artist).join(Artist).filter(Artist.ARTIST_NAME.like(f'%{artist_name}%'))
+        query = query.join(SongArtist).join(Artist).filter(Artist.ARTIST_NAME.like(f'%{artist_name}%'))
     if album_name:
         query = query.join(Song.album).filter(Album.ALBUM_NAME.like(f'%{album_name}%'))
 
@@ -51,7 +51,7 @@ def search_songs_combined(db: Session, title: str = None, genre_name: str = None
 
 
 
-
+# TODO: raus
 def search_for_title_and_artist(db: Session, title: str, artist: str):
     """
     Combined search for title and artist.

@@ -1,6 +1,6 @@
 import base64
 
-from src.api.middleware.custom_exceptions.MissingTitleFromMetadataError import MissingTitleFromMetadataError
+from src.api.middleware.custom_exceptions.missing_title_from_metadata_error import MissingTitleFromMetadataError
 from src.api.myapi.metadata_model import MetadataResponse, Artist
 from src.api.myapi.music_db_models import ConversionResponse
 from src.settings.error_messages import MISSING_TITLE_FROM_METADATA

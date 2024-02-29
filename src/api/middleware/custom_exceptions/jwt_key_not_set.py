@@ -1,0 +1,2 @@
+class JWTKeyNotSet(Exception):
+    pass

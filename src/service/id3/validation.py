@@ -1,7 +1,7 @@
 import magic
 from fastapi import UploadFile
 
-from src.api.middleware.custom_exceptions.WrongFileType import WrongFileType
+from src.api.middleware.custom_exceptions.wrong_file_type import WrongFileType
 from src.settings.error_messages import WRONG_MME_TYPE
 
 

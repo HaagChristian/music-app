@@ -7,9 +7,9 @@ from sqlalchemy.exc import NoResultFound
 from starlette import status
 from starlette.responses import Response
 
-from src.api.middleware.custom_exceptions.MissingTitleFromMetadataError import MissingTitleFromMetadataError
-from src.api.middleware.custom_exceptions.NoMetadataPassedError import NoMetadataPassedError
-from src.api.middleware.custom_exceptions.WrongFileType import WrongFileType
+from src.api.middleware.custom_exceptions.missing_title_from_metadata_error import MissingTitleFromMetadataError
+from src.api.middleware.custom_exceptions.no_metadata_passed_error import NoMetadataPassedError
+from src.api.middleware.custom_exceptions.wrong_file_type import WrongFileType
 from src.api.middleware.exceptions import exception_mapping
 from src.api.myapi.metadata_model import MetadataResponse, MetadataToChangeRequest, MetadataId3Input, DBMetadata
 from src.database.musicDB.db import get_db_music, commit_with_rollback_backup

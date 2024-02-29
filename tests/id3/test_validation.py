@@ -1,4 +1,4 @@
-from src.api.middleware.custom_exceptions.WrongFileType import WrongFileType
+from src.api.middleware.custom_exceptions.wrong_file_type import WrongFileType
 from src.service.id3.validation import check_input_file
 from src.settings.error_messages import WRONG_MME_TYPE
 from tests.resources.audio_files import VALID_MP3_FILE, JPEG_FILE

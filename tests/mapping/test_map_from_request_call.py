@@ -1,4 +1,4 @@
-from src.api.middleware.custom_exceptions.MissingTitleFromMetadataError import MissingTitleFromMetadataError
+from src.api.middleware.custom_exceptions.missing_title_from_metadata_error import MissingTitleFromMetadataError
 from src.api.myapi.metadata_model import MetadataResponse, Artist
 from src.service.mapping.map_data import map_data_from_request_call
 from src.settings.error_messages import MISSING_TITLE_FROM_METADATA

@@ -1,7 +1,6 @@
 from functools import wraps
 
 from fastapi import Depends, Request
-from fastapi import HTTPException
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base, Session
 

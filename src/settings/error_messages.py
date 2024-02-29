@@ -18,8 +18,6 @@ MISSING_TOKEN: str = "No token provided"
 
 MISSING_PARAMETER: str = "Please specify at least one metadata field"
 
-MISSING_SEARCH_CRITERIA: str = "Please specify at least one search criteria"
-
 UNSUPPORTED_FORMAT_ERROR: str = "Requested format is not supported"
 
 FILE_CONVERSION_ERROR: str = "Error occurred during file conversion"
@@ -34,5 +32,3 @@ SONG_ALREADY_IN_DB: str = "Song already exists in the database"
 
 INVALID_YEAR: str = "Invalid year. Please provide a valid year in the metadata"
 
-
-CONVERTED_FILE_ALREADY_EXISTS_IN_DB: str = "The converted file with this target format already exists in the database"

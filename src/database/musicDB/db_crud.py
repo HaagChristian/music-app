@@ -1,19 +1,15 @@
 """This module contains the CRUD operations for the database."""
-import tempfile
 
-from fastapi import HTTPException, status
 from sqlalchemy import and_
 from sqlalchemy.exc import NoResultFound
-from sqlalchemy.orm import Session, joinedload
-from starlette.background import BackgroundTask
-from starlette.responses import FileResponse
+from sqlalchemy.orm import Session
 
-from src.api.middleware.cleanup import cleanup
+from src.api.middleware.temp_file_operations import create_and_return_file
 
 from src.api.myapi.metadata_model import MetadataResponse, DBMetadata
 from src.api.myapi.music_db_models import ConversionResponse
 from src.database.musicDB.db_models import Album, File, Genre, Song, Artist, SongArtist, ConvertedFile
-from src.settings.error_messages import CONVERTED_FILE_ALREADY_EXISTS_IN_DB, DB_NO_RESULT_FOUND
+from src.settings.error_messages import DB_NO_RESULT_FOUND
 
 
 def add_file_and_metadata(db: Session, file, metadata: MetadataResponse, file_name: str):
@@ -57,13 +53,22 @@ def get_song_by_title(db: Session, metadata: MetadataResponse):
     return db.query(Song).filter(Song.TITLE == metadata.title).first()
 
 
+def get_file_by_song_id(db: Session, song_id: int):
+    return db.query(File).join(File.song).filter(Song.SONG_ID == song_id).first()
+
+
+def get_file_by_id(db: Session, file_id: int):
+    return db.query(File).filter(File.FILE_ID == file_id).first()
+
+
 def is_converted_file_already_in_db(db: Session, file_name: str, file_type: str):
     return db.query(ConvertedFile).filter(and_(ConvertedFile.FILE_NAME == file_name, ConvertedFile.FILE_TYPE == file_type)).first()
 
 
 def handle_conversion_response(response: ConversionResponse, original_file_id: int, file_name: str, db: Session):
-    if is_converted_file_already_in_db(db, file_name, response.file_type):
-        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=CONVERTED_FILE_ALREADY_EXISTS_IN_DB)
+    existing_file = is_converted_file_already_in_db(db, file_name, response.file_type)
+    if existing_file:
+        return create_and_return_file(existing_file)
     else:
         converted_file = ConvertedFile(
             ORIGINAL_FILE_ID=original_file_id,
@@ -73,54 +78,7 @@ def handle_conversion_response(response: ConversionResponse, original_file_id: i
         )
         db.add(converted_file)
         db.flush()
-        with tempfile.NamedTemporaryFile(delete=False) as temp_file:
-            temp_file_path = temp_file.name
-            temp_file.write(converted_file.FILE_DATA)
-            return FileResponse(temp_file_path, background=BackgroundTask(cleanup, temp_file_path=temp_file_path, temp_file=temp_file))
-
-
-
-def get_file_by_song_id(db: Session, song_id: int):
-    return db.query(File).join(File.song).filter(Song.SONG_ID == song_id).first()
-
-
-def get_song_and_file_by_song_id(db: Session, song_id: int):
-    song_obj = db.query(Song).filter(Song.SONG_ID == song_id). \
-        options(
-        joinedload(Song.file),
-        joinedload(Song.album),
-        joinedload(Song.genre),
-        joinedload(Song.artist)
-    ).first()
-    if not song_obj:
-        raise NoResultFound(DB_NO_RESULT_FOUND)
-    return song_obj
-
-
-def get_file_by_id(db: Session, file_id: int):
-    file = db.query(File).filter(File.FILE_ID == file_id).first()
-    if not file:
-        raise NoResultFound(DB_NO_RESULT_FOUND)
-    return file
-
-
-def get_simple_song_by_id(db: Session, song_id: int):
-    song = db.query(Song).filter(Song.SONG_ID == song_id).first()
-    if not song:
-        raise NoResultFound(DB_NO_RESULT_FOUND)
-    return song
-
-
-def get_song_by_id(db: Session, song_id: int):
-    song = db.query(Song).filter(Song.SONG_ID == song_id).\
-            options(
-        joinedload(Song.album),
-        joinedload(Song.genre),
-        joinedload(Song.artist)
-            ).first()
-    if not song:
-        raise NoResultFound(DB_NO_RESULT_FOUND)
-    return song
+        return create_and_return_file(converted_file)
 
 
 def update_file_and_metadata(db: Session, file, metadata: DBMetadata):

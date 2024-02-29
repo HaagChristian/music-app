@@ -33,7 +33,7 @@ def map_song_with_rel_to_model(song_obj):
         song_id=song_obj.SONG_ID,
         title=song_obj.TITLE,
         duration=song_obj.DURATION,
-        release_date=song_obj.RELEASE_DATE.year if song_obj.RELEASE_DATE else None,
+        release_date=song_obj.RELEASE_DATE if song_obj.RELEASE_DATE else None,
         album=album_name,
         genre=genre_name,
         artist=artists,

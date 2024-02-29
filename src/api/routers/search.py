@@ -47,7 +47,7 @@ def search_combined(criteria: SearchCriteria, db: Session = Depends(get_db_music
         for song in songs:
             songs_with_rel.append(map_song_with_rel_to_model(song))
         return songs_with_rel
-    except NoResultFound as e:
+    except (ValueError, NoResultFound) as e:
         http_status, detail_function = exception_mapping.get(type(e), (
             status.HTTP_500_INTERNAL_SERVER_ERROR, lambda e: str(e.args[0])))
         raise HTTPException(status_code=http_status, detail=detail_function(e))

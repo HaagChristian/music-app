@@ -1,8 +1,9 @@
-from typing import Optional, List
-
-from pydantic import BaseModel, Field
+from typing import Optional, List, Union
+from datetime import datetime
+from pydantic import BaseModel, Field, field_validator
 
 from src.api.myapi.metadata_model import Artist
+from src.settings.error_messages import INVALID_YEAR
 
 
 class FileBase(BaseModel):
@@ -70,7 +71,7 @@ class SongBase(BaseModel):
     file_id: int
     duration: Optional[float] = None
     title: Optional[str] = None
-    release_date: Optional[int] = Field(None, description='Date is only provided as year')
+    release_date: Optional[Union[int]] = Field(None, description='Date is only provided as year')
 
 
 class Song(SongBase):

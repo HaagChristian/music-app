@@ -8,7 +8,7 @@ from src.api.middleware.exceptions import exception_mapping
 from src.database.musicDB.db import get_db_music
 from src.database.musicDB.db_crud import get_file_by_id, get_file_by_song_id, delete_song_and_file_by_song_id
 from src.settings.error_messages import DB_NO_RESULT_FOUND
-from src.api.middleware.temp_file_operations import create_and_return_file
+from src.api.middleware.file_operations import create_and_return_file
 
 http_bearer = HTTPBearer()
 

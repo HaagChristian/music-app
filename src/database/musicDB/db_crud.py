@@ -4,7 +4,7 @@ from sqlalchemy import and_
 from sqlalchemy.exc import NoResultFound
 from sqlalchemy.orm import Session
 
-from src.api.middleware.temp_file_operations import create_and_return_file
+from src.api.middleware.file_operations import create_and_return_file
 
 from src.api.myapi.metadata_model import MetadataResponse, DBMetadata
 from src.api.myapi.music_db_models import ConversionResponse

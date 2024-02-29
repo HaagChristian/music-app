@@ -65,7 +65,7 @@ app.add_middleware(
 
 def auth_validate(request: Request):
     if '/id3service' in request.url.path or 'user/me' in request.url.path or '/data/search' in request.url.path or \
-            '/data/change-metadata' in request.url.path:  # TODO: Add encoder Service
+            '/data/change-metadata' in request.url.path or '/encoderservice' in request.url.path:
         try:
             # create HTTPAuthorizationCredentials for better token handling
             token_str = request.headers.get("authorization", None)

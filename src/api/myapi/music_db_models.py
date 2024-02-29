@@ -1,5 +1,8 @@
-from pydantic import BaseModel, Field
 from typing import Optional, List
+
+from pydantic import BaseModel, Field
+
+from src.api.myapi.metadata_model import Artist
 
 
 class FileBase(BaseModel):
@@ -10,6 +13,7 @@ class FileBase(BaseModel):
 
 class File(FileBase):
     file_id: int
+
     class Config:
         from_attributes = True
 
@@ -23,6 +27,7 @@ class ConvertedFileBase(BaseModel):
 
 class ConvertedFile(ConvertedFileBase):
     conversion_id: int
+
     class Config:
         from_attributes = True
 
@@ -32,12 +37,9 @@ class ConversionResponse(BaseModel):
     file_data: bytes
 
 
-class ArtistBase(BaseModel):
-    artist_name: str
+class ArtistBase(Artist):
+    id: int
 
-
-class Artist(ArtistBase):
-    artist_id: int
     class Config:
         from_attributes = True
 
@@ -48,6 +50,7 @@ class GenreBase(BaseModel):
 
 class Genre(GenreBase):
     genre_id: int
+
     class Config:
         from_attributes = True
 
@@ -58,6 +61,7 @@ class AlbumBase(BaseModel):
 
 class Album(AlbumBase):
     album_id: int
+
     class Config:
         from_attributes = True
 
@@ -71,6 +75,7 @@ class SongBase(BaseModel):
 
 class Song(SongBase):
     song_id: int
+
     class Config:
         from_attributes = True
 
@@ -88,7 +93,7 @@ class SongArtist(SongArtistBase):
 class SongWithRelations(Song):
     album: Optional[str] = None
     genre: Optional[str] = None
-    artists: Optional[List[ArtistBase]] = None
+    artist: Optional[List[ArtistBase]] = None
+
     class Config:
         from_attributes = True
-

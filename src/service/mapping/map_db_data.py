@@ -1,32 +1,5 @@
-from typing import List
-
-from src.api.myapi.metadata_model import MetadataFromSearch, MetadataToChangeRequest, MetadataId3Input
-from src.api.myapi.music_db_models import SongWithRelations, Artist, ArtistBase
-from src.database.musicDB.db_models import Song
-
-
-def map_search_db_data(db_result: List[Song]) -> List[MetadataFromSearch]:
-    mapped_output_data: List[MetadataFromSearch] = []
-
-    for song in db_result:
-        artists = [Artist(artist_name=artist.artist.ARTIST_NAME) for artist in (song.artist or [])]
-        album_name = song.album.ALBUM_NAME if song.album else None
-        genre_name = song.genre.GENRE_NAME if song.genre else None
-        release_date = str(song.RELEASE_DATE) if song.RELEASE_DATE else None
-        duration = song.DURATION if song.DURATION else None
-
-        metadata = MetadataFromSearch(
-            title=song.TITLE,
-            artists=artists,
-            album=album_name,
-            genre=genre_name,
-            date=release_date,
-            duration=duration,
-            file_id=song.FILE_ID
-        )
-        mapped_output_data.append(metadata)
-
-    return mapped_output_data
+from src.api.myapi.metadata_model import MetadataToChangeRequest, MetadataId3Input
+from src.api.myapi.music_db_models import SongWithRelations, ArtistBase
 
 
 def input_mapping_from_change_metadata(metadata_to_change: MetadataToChangeRequest) -> MetadataId3Input:
@@ -47,8 +20,12 @@ def map_song_with_rel_to_model(song_obj):
     """
     Converts SQLAlchemy song object to SongWithRelations model.
     """
-
-    artists = [ArtistBase(artist_name=artist.artist.ARTIST_NAME) for artist in (song_obj.artist or [])]
+    artists = []
+    if song_obj.artist:
+        for artist in song_obj.artist:
+            artists.append(ArtistBase(name=artist.artist.ARTIST_NAME, id=artist.artist.ARTIST_ID))
+    else:
+        artists = []
 
     album_name = song_obj.album.ALBUM_NAME if song_obj.album else None
     genre_name = song_obj.genre.GENRE_NAME if song_obj.genre else None
@@ -62,4 +39,3 @@ def map_song_with_rel_to_model(song_obj):
         artist=artists,
         file_id=song_obj.file.FILE_ID
     )
-

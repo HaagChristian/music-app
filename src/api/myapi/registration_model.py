@@ -40,7 +40,7 @@ class SignUpRequestModel(BaseModel):
     first_name: str = Field(..., min_length=3, max_length=256)
     last_name: str = Field(..., min_length=3, max_length=256)
     username: str = Field(..., min_length=3, max_length=256)
-    address: Address = Field(..., min_length=3, max_length=256)
+    address: Address
 
     @field_validator("password")
     def password_validator(cls, v):

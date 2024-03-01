@@ -7,7 +7,7 @@ from src.settings.error_messages import MISSING_PARAMETER, INVALID_YEAR
 
 
 class Artist(BaseModel):
-    name: str
+    name: str = Field(..., min_length=1, max_length=100)
 
 
 class DBMetadata(BaseModel):
@@ -35,9 +35,9 @@ class DBMetadata(BaseModel):
 
 class MetadataToChangeRequest(BaseModel):
     artists: Optional[List[Artist]] = None
-    genre: Optional[str] = None
-    album: Optional[str] = None
-    title: Optional[str] = None
+    genre: Optional[str] = Field(None, min_length=1, max_length=100)
+    album: Optional[str] = Field(None, min_length=1, max_length=100)
+    title: Optional[str] = Field(None, min_length=1, max_length=100)
     date: Optional[Union[int]] = Field(None, description='Date is only provided as year', example=2021)
     # Union is required because the date can be None
     song_id: int

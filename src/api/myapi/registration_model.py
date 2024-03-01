@@ -1,15 +1,15 @@
 from typing import Optional
 
-from pydantic import BaseModel, EmailStr, field_validator
+from pydantic import BaseModel, EmailStr, field_validator, Field
 
 
 class Address(BaseModel):
-    street: str
+    street: str = Field(..., min_length=3, max_length=256)
     house_number: int
     postal_code: int
-    city: str
-    country: str
-    state: Optional[str] = None
+    city: str = Field(..., min_length=3, max_length=256)
+    country: str = Field(..., min_length=3, max_length=256)
+    state: Optional[str] = Field(None, min_length=3, max_length=256)
 
 
 class TokenModel(BaseModel):
@@ -31,16 +31,16 @@ class AuthUser(BaseModel):
 
 class SignInRequestModel(BaseModel):
     email: EmailStr
-    password: str
+    password: str = Field(..., min_length=3, max_length=256)
 
 
 class SignUpRequestModel(BaseModel):
-    email: EmailStr
-    password: str
-    first_name: str
-    last_name: str
-    username: str
-    address: Address
+    email: EmailStr = Field(..., max_length=256)
+    password: str = Field(..., max_length=256)
+    first_name: str = Field(..., min_length=3, max_length=256)
+    last_name: str = Field(..., min_length=3, max_length=256)
+    username: str = Field(..., min_length=3, max_length=256)
+    address: Address = Field(..., min_length=3, max_length=256)
 
     @field_validator("password")
     def password_validator(cls, v):

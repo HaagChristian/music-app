@@ -39,7 +39,7 @@ class ConversionResponse(BaseModel):
 
 
 class ArtistBase(Artist):
-    id: int
+    artist_id: int
 
     class Config:
         from_attributes = True
@@ -94,7 +94,7 @@ class SongArtist(SongArtistBase):
 class SongWithRelations(Song):
     album: Optional[str] = None
     genre: Optional[str] = None
-    artist: Optional[List[ArtistBase]] = None
+    artists: Optional[List[ArtistBase]] = None
 
     class Config:
         from_attributes = True

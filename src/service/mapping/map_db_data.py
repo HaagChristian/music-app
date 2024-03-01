@@ -23,7 +23,7 @@ def map_song_with_rel_to_model(song_obj):
     artists = []
     if song_obj.artist:
         for artist in song_obj.artist:
-            artists.append(ArtistBase(name=artist.artist.ARTIST_NAME, id=artist.artist.ARTIST_ID))
+            artists.append(ArtistBase(name=artist.artist.ARTIST_NAME, artist_id=artist.artist.ARTIST_ID))
     else:
         artists = []
 
@@ -36,6 +36,6 @@ def map_song_with_rel_to_model(song_obj):
         release_date=song_obj.RELEASE_DATE if song_obj.RELEASE_DATE else None,
         album=album_name,
         genre=genre_name,
-        artist=artists,
+        artists=artists,
         file_id=song_obj.file.FILE_ID
     )

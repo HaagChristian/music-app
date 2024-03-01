@@ -3,10 +3,10 @@ from starlette import status
 
 from src.api.middleware.custom_exceptions.missing_title_from_metadata_error import MissingTitleFromMetadataError
 from src.api.middleware.custom_exceptions.no_metadata_passed_error import NoMetadataPassedError
-from src.api.middleware.custom_exceptions.unsupported_format_error import UnsupportedFormatError
-from src.api.middleware.custom_exceptions.wrong_file_type import WrongFileType
 from src.api.middleware.custom_exceptions.unauthorized import Unauthorized
+from src.api.middleware.custom_exceptions.unsupported_format_error import UnsupportedFormatError
 from src.api.middleware.custom_exceptions.user_already_exist import UserAlreadyExistException
+from src.api.middleware.custom_exceptions.wrong_file_type import WrongFileType
 
 exception_mapping = {
     NoResultFound: (status.HTTP_404_NOT_FOUND, lambda e: str(e.args[0])),

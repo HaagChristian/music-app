@@ -5,7 +5,6 @@ from sqlalchemy.exc import NoResultFound
 from sqlalchemy.orm import Session
 
 from src.api.middleware.file_operations import create_and_return_file
-
 from src.api.myapi.metadata_model import MetadataResponse, DBMetadata
 from src.api.myapi.music_db_models import ConversionResponse
 from src.database.musicDB.db_models import Album, File, Genre, Song, Artist, SongArtist, ConvertedFile
@@ -62,7 +61,8 @@ def get_file_by_id(db: Session, file_id: int):
 
 
 def is_converted_file_already_in_db(db: Session, file_name: str, file_type: str):
-    return db.query(ConvertedFile).filter(and_(ConvertedFile.FILE_NAME == file_name, ConvertedFile.FILE_TYPE == file_type)).first()
+    return db.query(ConvertedFile).filter(
+        and_(ConvertedFile.FILE_NAME == file_name, ConvertedFile.FILE_TYPE == file_type)).first()
 
 
 def handle_conversion_response(response: ConversionResponse, original_file_id: int, file_name: str, db: Session):
@@ -176,6 +176,3 @@ def delete_song_and_file_by_song_id(db: Session, song_id: int):
 
     db.commit()
     return True
-
-
-

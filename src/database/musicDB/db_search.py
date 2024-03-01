@@ -1,4 +1,3 @@
-from sqlalchemy import and_
 from sqlalchemy.orm import Session, joinedload
 
 from src.database.musicDB.db_models import Song, Artist, Album, Genre, SongArtist
@@ -44,37 +43,7 @@ def search_songs_combined(db: Session, title: str = None, genre_name: str = None
         query = query.join(Song.album).filter(Album.ALBUM_NAME.like(f'%{album_name}%'))
 
     return query.options(
-            joinedload(Song.album),
-            joinedload(Song.genre),
-            joinedload(Song.artist)
-        ).all()
-
-
-
-# TODO: raus
-def search_for_title_and_artist(db: Session, title: str, artist: str):
-    """
-    Combined search for title and artist.
-    """
-    if title and artist:
-        return db.query(Song).join(Song.artist).join(Song.album).filter(
-            and_(
-                Song.TITLE.like(title),
-                Artist.ARTIST_NAME == artist
-            )
-        ).options(
-            joinedload(Song.artist),
-            joinedload(Song.album),
-            joinedload(Song.genre)) \
-            .all()
-    elif title and not artist:
-        return db.query(Song).join(Song.artist).join(Song.album).filter(Song.TITLE.like(title)).options(
-            joinedload(Song.artist),
-            joinedload(Song.album),
-            joinedload(Song.genre)).all()
-    else:
-        # only artist
-        return db.query(Song).join(Song.artist).join(Song.album).filter(Artist.ARTIST_NAME == artist).options(
-            joinedload(Song.artist),
-            joinedload(Song.album),
-            joinedload(Song.genre)).all()
+        joinedload(Song.album),
+        joinedload(Song.genre),
+        joinedload(Song.artist)
+    ).all()

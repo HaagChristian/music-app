@@ -1,6 +1,7 @@
+import os
 import tempfile
 from tempfile import TemporaryFile
-import os
+
 from starlette.background import BackgroundTask
 from starlette.responses import FileResponse
 
@@ -12,7 +13,8 @@ def create_and_return_file(file):
     with tempfile.NamedTemporaryFile(delete=False) as temp_file:
         temp_file_path = temp_file.name
         temp_file.write(file.FILE_DATA)
-        return FileResponse(temp_file_path, background=BackgroundTask(cleanup, temp_file_path=temp_file_path, temp_file=temp_file))
+        return FileResponse(temp_file_path,
+                            background=BackgroundTask(cleanup, temp_file_path=temp_file_path, temp_file=temp_file))
 
 
 def cleanup(temp_file: TemporaryFile, temp_file_path: str):

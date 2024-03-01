@@ -1,9 +1,8 @@
 from typing import Optional, List, Union
-from datetime import datetime
-from pydantic import BaseModel, Field, field_validator
+
+from pydantic import BaseModel, Field
 
 from src.api.myapi.metadata_model import Artist
-from src.settings.error_messages import INVALID_YEAR
 
 
 class FileBase(BaseModel):

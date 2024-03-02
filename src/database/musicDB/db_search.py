@@ -14,17 +14,17 @@ def fetch_all_search_criteria(db: Session):
     artists = db.query(Artist.ARTIST_NAME).distinct().all()
     artists_list = [item for artist in artists for item in artist[0].split("/")]
     if artists_list:
-        criteria_dict["interpret"] = artists_list
+        criteria_dict["artist_name"] = artists_list
 
     albums = db.query(Album.ALBUM_NAME).distinct().all()
     albums_list = [item for album in albums for item in album[0].split("/")]
     if albums_list:
-        criteria_dict["album"] = albums_list
+        criteria_dict["album_name"] = albums_list
 
     genres = db.query(Genre.GENRE_NAME).distinct().all()
     genres_list = [item for genre in genres for item in genre[0].split("/")]
     if genres_list:
-        criteria_dict["genre"] = genres_list
+        criteria_dict["genre_name"] = genres_list
 
     return criteria_dict
 

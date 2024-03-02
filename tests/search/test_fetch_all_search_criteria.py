@@ -1,7 +1,7 @@
 from unittest.mock import MagicMock, patch
-from src.database.musicDB.db_search import fetch_all_search_criteria
-from src.database.musicDB.db_models import Song, Artist, Album, Genre
 
+from src.database.musicDB.db_models import Song, Artist, Album, Genre
+from src.database.musicDB.db_search import fetch_all_search_criteria
 
 # data for testing
 mock_titles = [('Song 1',), ('Song 2/Song 3',)]
@@ -28,8 +28,8 @@ def test_fetch_all_search_criteria_interpret(mock_artist):
 
     criteria_dict = fetch_all_search_criteria(mock_session)
 
-    assert 'interpret' in criteria_dict
-    assert criteria_dict['interpret'] == ['Artist 1', 'Artist 2', 'Artist 3']
+    assert 'artist_name' in criteria_dict
+    assert criteria_dict['artist_name'] == ['Artist 1', 'Artist 2', 'Artist 3']
 
 
 @patch('src.database.musicDB.db_search.Genre')
@@ -39,8 +39,8 @@ def test_fetch_all_search_criteria_genre(mock_genre):
 
     criteria_dict = fetch_all_search_criteria(mock_session)
 
-    assert 'genre' in criteria_dict
-    assert criteria_dict['genre'] == ['Genre 1', 'Genre 2', 'Genre 3']
+    assert 'genre_name' in criteria_dict
+    assert criteria_dict['genre_name'] == ['Genre 1', 'Genre 2', 'Genre 3']
 
 
 @patch('src.database.musicDB.db_search.Album')
@@ -50,5 +50,5 @@ def test_fetch_all_search_criteria_album(mock_album):
 
     criteria_dict = fetch_all_search_criteria(mock_session)
 
-    assert 'album' in criteria_dict
-    assert criteria_dict['album'] == ['Album 1', 'Album 2', 'Album 3']
+    assert 'genre_name' in criteria_dict
+    assert criteria_dict['genre_name'] == ['Album 1', 'Album 2', 'Album 3']

@@ -12,8 +12,8 @@ from src.api.middleware.custom_exceptions.no_metadata_passed_error import NoMeta
 from src.api.middleware.custom_exceptions.wrong_file_type import WrongFileType
 from src.api.middleware.exceptions import exception_mapping
 from src.api.myapi.metadata_model import MetadataResponse, MetadataToChangeRequest, MetadataId3Input, DBMetadata
-from src.database.musicDB.db import get_db_music, commit_with_rollback_backup
-from src.database.musicDB.db_crud import add_file_and_metadata, get_song_by_title, get_file_by_song_id
+from src.database.music_db.db import get_db_music, commit_with_rollback_backup
+from src.database.music_db.db_crud import add_file_and_metadata, get_song_by_title, get_file_by_song_id
 from src.service.helper import get_file_bytes, file_helper_with_temp_file
 from src.service.id3.validation import check_input_file
 from src.service.mapping.map_data import map_data_from_request_call

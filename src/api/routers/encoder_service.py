@@ -7,9 +7,9 @@ from starlette import status
 
 from src.api.middleware.custom_exceptions.unsupported_format_error import UnsupportedFormatError
 from src.api.middleware.exceptions import exception_mapping
-from src.database.musicDB.db import get_db_music, commit_with_rollback_backup
-from src.database.musicDB.db_crud import get_file_by_id
-from src.database.musicDB.db_crud import handle_conversion_response
+from src.database.music_db.db import get_db_music, commit_with_rollback_backup
+from src.database.music_db.db_crud import get_file_by_id
+from src.database.music_db.db_crud import handle_conversion_response
 from src.service.mapping.map_data import map_converted_data_from_request_call
 from src.settings.error_messages import DB_NO_RESULT_FOUND, FILE_CONVERSION_ERROR, UNSUPPORTED_FORMAT_ERROR
 from src.settings.settings import REQUEST_TO_ENCODER_SERVICE

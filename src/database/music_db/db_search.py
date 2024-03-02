@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session, joinedload
 
-from src.database.musicDB.db_models import Song, Artist, Album, Genre, SongArtist
+from src.database.music_db.db_models import Song, Artist, Album, Genre, SongArtist
 
 
 def fetch_all_search_criteria(db: Session):

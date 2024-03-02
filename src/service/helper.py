@@ -2,7 +2,7 @@ import tempfile
 
 from fastapi import UploadFile
 
-from src.database.musicDB.db_crud import update_file_and_metadata
+from src.database.music_db.db_crud import update_file_and_metadata
 
 
 def get_file_bytes(file: UploadFile) -> bytes:

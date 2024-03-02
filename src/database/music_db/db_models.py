@@ -3,7 +3,7 @@ from typing import List
 from sqlalchemy import String, ForeignKey, Integer, LargeBinary, Date, Enum
 from sqlalchemy.orm import Mapped, mapped_column, relationship, backref
 
-from src.database.musicDB.db import Base
+from src.database.music_db.db import Base
 
 
 class Artist(Base):

@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 
 from src.api.myapi.registration_model import Address
 from src.api.myapi.user_model import UserResponseModel
-from src.database.userDB.db_model_user import User
+from src.database.user_db.db_model_user import User
 from src.settings.error_messages import DB_NO_RESULT_FOUND
 
 

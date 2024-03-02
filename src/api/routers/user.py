@@ -6,7 +6,7 @@ from starlette import status
 from src.api.middleware.custom_exceptions.unauthorized import Unauthorized
 from src.api.middleware.exceptions import exception_mapping
 from src.api.myapi.user_model import UserResponseModel
-from src.database.userDB.db import get_db_user
+from src.database.user_db.db import get_db_user
 from src.service.login.user_data import get_current_user
 
 http_bearer = HTTPBearer()

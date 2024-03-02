@@ -8,8 +8,8 @@ from starlette import status
 from src.api.middleware.exceptions import exception_mapping
 from src.api.myapi.music_db_models import SongWithRelations
 from src.api.myapi.search_model import SearchCriteria
-from src.database.musicDB.db import get_db_music
-from src.database.musicDB.db_search import *
+from src.database.music_db.db import get_db_music
+from src.database.music_db.db_search import *
 from src.service.mapping.map_db_data import map_song_with_rel_to_model
 from src.settings.error_messages import DB_NO_RESULT_FOUND
 

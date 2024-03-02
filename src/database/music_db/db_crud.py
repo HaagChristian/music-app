@@ -7,7 +7,7 @@ from sqlalchemy.orm import Session
 from src.api.middleware.file_operations import create_and_return_file
 from src.api.myapi.metadata_model import MetadataResponse, DBMetadata
 from src.api.myapi.music_db_models import ConversionResponse
-from src.database.musicDB.db_models import Album, File, Genre, Song, Artist, SongArtist, ConvertedFile
+from src.database.music_db.db_models import Album, File, Genre, Song, Artist, SongArtist, ConvertedFile
 from src.settings.error_messages import DB_NO_RESULT_FOUND
 
 

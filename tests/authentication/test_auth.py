@@ -41,7 +41,7 @@ def test_authenticate_user_with_valid_credentials(auth_provider, monkeypatch):
     def mock_get_user_by_email(db: Session, email: str):
         return user_mock_valid
 
-    monkeypatch.setattr('src.database.userDB.db_model_user.User.get_user_by_email', mock_get_user_by_email)
+    monkeypatch.setattr('src.database.user_db.db_model_user.User.get_user_by_email', mock_get_user_by_email)
     user_email = "john.doe@example.com"
     password = "password123"
     db = Mock(Session)
@@ -57,7 +57,7 @@ def test_authenticate_user_with_invalid_credentials(auth_provider, monkeypatch):
     def mock_get_user_by_email(db: Session, email: str):
         return None
 
-    monkeypatch.setattr('src.database.userDB.db_model_user.User.get_user_by_email', mock_get_user_by_email)
+    monkeypatch.setattr('src.database.user_db.db_model_user.User.get_user_by_email', mock_get_user_by_email)
     user_email = "john.doe@example.com"
     password = "wrong_password"
     db = Mock(Session)

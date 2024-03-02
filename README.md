@@ -20,6 +20,7 @@ The Music Services provides endpoints for:
 
 - uploading music files (mp3 files | using the ID3 Service)
 - change metadata in the database and for the corresponding music file (using the ID3 Service)
+- convert mp3 files (these must first be loaded into the database via upload) to wav/ogg/flac format (using the Encoder Service)
 
 ## Installation
 
@@ -104,3 +105,6 @@ The following environment variables are required:
 ### Standalone or Docker
 
 - RUN_IN_DOCKER_COMPOSE
+
+### Encoder Service
+ The Python module pydub is dependent on the ffmpeg package. When using the service within Docker, this package is loaded automatically. As the package in turn requires various dependencies, the build of the container can take a few minutes.

@@ -4,6 +4,8 @@ DB_NO_RESULT_FOUND: str = "No data found"
 
 JWT_INVALID_TOKEN: str = "Provide a valid auth token"
 
+INVALID_REFRESH_TOKEN: str = "Provide a valid refresh token"
+
 WRONG_MME_TYPE: str = "Wrong media type. Please provide a valid mp3 file"
 
 NO_METADATA_FOUND: str = "No ID3 tags found in the file"

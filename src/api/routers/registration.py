@@ -16,6 +16,7 @@ from src.api.myapi.registration_model import UserAuthResponseModel, SignUpReques
     TokenModel, AuthUser
 from src.database.user_db.db import get_db_user, commit_on_signup
 from src.service.registration.signup_user import register_user, signin_user
+from src.settings.error_messages import INVALID_REFRESH_TOKEN
 
 router = APIRouter(
     prefix="/api/registration", tags=["Create a User"]
@@ -68,6 +69,8 @@ def new_token_from_refresh_token(token: Annotated[HTTPAuthorizationCredentials, 
     try:
         auth = AuthJwt()
         access_token = auth.refresh_token(refresh_token=token)
+        if not access_token:
+            raise Unauthorized(INVALID_REFRESH_TOKEN)
         refresh_token = AuthJwt.encode_refresh_token(user_email=auth.get_token_data_from_decoded_token)
 
         return UserAuthResponseModel(token=TokenModel(access_token=access_token, refresh_token=refresh_token))

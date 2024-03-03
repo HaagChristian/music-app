@@ -4,7 +4,7 @@ from pydantic import BaseModel, EmailStr, field_validator, Field
 class Address(BaseModel):
     street: str = Field(..., min_length=3, max_length=256)
     house_number: int = Field(..., gt=0)
-    postal_code: str = Field(..., min_length=1)
+    postal_code: str = Field(..., min_length=1, max_length=256)
     city: str = Field(..., min_length=3, max_length=256)
     country: str = Field(..., min_length=3, max_length=256)
 

@@ -26,6 +26,5 @@ def get_current_user(jwt_payload: str, db: Session):
             house_number=user_data.address[0].HOUSE_NUMBER,
             postal_code=user_data.address[0].POSTAL_CODE,
             city=user_data.address[0].CITY,
-            country=user_data.address[0].COUNTRY,
-            state=user_data.address[0].STATE)
+            country=user_data.address[0].COUNTRY)
     )

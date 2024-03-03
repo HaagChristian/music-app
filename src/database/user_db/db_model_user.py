@@ -31,8 +31,7 @@ class User(Base):
             HOUSE_NUMBER=user_data.address.house_number,
             POSTAL_CODE=user_data.address.postal_code,
             CITY=user_data.address.city,
-            COUNTRY=user_data.address.country,
-            STATE=user_data.address.state
+            COUNTRY=user_data.address.country
         )
 
         new_user = User(

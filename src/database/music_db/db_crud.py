@@ -97,6 +97,11 @@ def update_file_and_metadata(db: Session, file, metadata: DBMetadata):
 
     if metadata.album:
         album_id = db.query(Song).filter(Song.SONG_ID == metadata.song_id).first().ALBUM_ID
+        if not album_id:
+            album = Album(ALBUM_NAME=metadata.album)
+            db.add(album)
+            db.flush()
+            db.query(Song).filter(Song.SONG_ID == metadata.song_id).update({Song.ALBUM_ID: album.ALBUM_ID})
         db.query(Album).filter(Album.ALBUM_ID == album_id).update({Album.ALBUM_NAME: metadata.album})
 
     if metadata.artists:

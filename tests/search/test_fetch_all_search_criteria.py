@@ -5,8 +5,8 @@ from src.database.music_db.db_search import fetch_all_search_criteria
 
 # data for testing
 mock_titles = [('Song 1',), ('Song 2/Song 3',)]
-mock_artist_names = [('Artist 1',), ('Artist 2/Artist 3',)]
-mock_album_names = [('Album 1',), ('Album 2/Album 3',)]
+mock_artist_names = [('Artist 1',), ('Artist 2/ Artist 3',)]
+mock_album_names = [('Album 1 ',), ('Album 2/Album 3 ',)]
 mock_genre_names = [('Genre 1',), ('Genre 2/Genre 3',)]
 
 
